@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { BsCloudUpload } from 'react-icons/bs';
-import SummarizeButton from './SummarizeButton';
+import DocumentOptions from './DocumentOptions';
 
 interface AddSourceFileProps {
   onFilesAdded: (files: File[]) => void;
@@ -228,7 +228,7 @@ const AddSourceFile: React.FC<AddSourceFileProps> = ({
               {uploadedFile.type || 'Unknown type'}
             </p>
           </div>
-          <SummarizeButton content={fileContent} type="file" isDisabled={!fileContent} />
+          <DocumentOptions content={fileContent} type="file" isDisabled={!fileContent} />
         </>
       )}
     </div>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Textarea } from '@heroui/input';
 import { Button } from '@heroui/button';
-import SummarizeButton from './SummarizeButton';
+import DocumentOptions from './DocumentOptions';
 
 const AddSourceTextDoc = () => {
   const [docText, setDocText] = React.useState('');
@@ -25,7 +25,7 @@ const AddSourceTextDoc = () => {
         rows={4}
       />
 
-      <SummarizeButton content={docText} type="text" isDisabled={!docText.trim()} />
+      <DocumentOptions content={docText} type="text" isDisabled={!docText.trim()} />
     </div>
   );
 };
