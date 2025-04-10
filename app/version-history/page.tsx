@@ -169,23 +169,6 @@ export default function VersionHistoryPage() {
     URL.revokeObjectURL(url);
   };
 
-  const handleRestore = async (id: string) => {
-    try {
-      // Get the document to restore
-      const documentToRestore = documents.find((doc) => doc.id === id);
-      if (!documentToRestore) {
-        throw new Error('Document not found');
-      }
-
-      // In a real app, you would dispatch an action or use context to restore to editor
-      // For demo, we'll just show a console message and alert
-      console.log(`Document ${id} restored:`, documentToRestore.content);
-      alert(`Document "${documentToRestore.title}" restored successfully!`);
-    } catch (error) {
-      console.error('Error restoring document:', error);
-    }
-  };
-
   if (isLoading) {
     return (
       <div className="p-4">
@@ -231,13 +214,6 @@ export default function VersionHistoryPage() {
                   title="Download"
                 >
                   <FiDownload />
-                </button>
-                <button
-                  onClick={() => handleRestore(doc.id)}
-                  className="p-2 text-gray-500 hover:text-gray-700"
-                  title="Restore"
-                >
-                  <IoDocumentText />
                 </button>
                 <button
                   onClick={() => handleDelete(doc.id)}
