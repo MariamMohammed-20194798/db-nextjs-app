@@ -17,14 +17,21 @@ const AddSourceTextDoc = () => {
         className="w-full p-4 text-base border border-gray-200 rounded-md outline-none"
         placeholder="Document Name"
       />
-      <Textarea
+      {/* <Textarea
         value={docText}
         onChange={(e) => setDocText(e.target.value)}
-        className="w-full min-h-[200px] text-base border border-gray-200 rounded-md outline-none"
-        labelPlacement="outside"
+        // className="w-full min-h-[200px] text-base rounded-md border border-gray-200 outline-none"
         placeholder="Document Content"
-        style={{ outline: 'none', appearance: 'none' }}
+        maxRows={5}
+      /> */}
+      <textarea
+        className="w-full p-3 border border-gray-200 rounded mb-4 text-black outline-none"
+        value={docText}
+        onChange={(e) => setDocText(e.target.value)}
+        placeholder="Enter text to translate..."
+        rows={4}
       />
+
       <SummarizeButton content={docText} type="text" isDisabled={!docText.trim()} />
     </div>
   );

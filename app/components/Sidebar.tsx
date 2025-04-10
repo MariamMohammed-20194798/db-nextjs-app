@@ -66,21 +66,6 @@ export default function Sidebar() {
           Account
         </Link>
       </nav>
-      <div className="mt-auto space-y-2">
-        <Link
-          href="/support"
-          className={`block px-3 py-2 rounded flex items-center gap-2 ${
-            pathname === '/support' ? 'bg-gray-200' : 'hover:bg-gray-200'
-          }`}
-        >
-          <IoHelpCircle className="w-4 h-4" />
-          Support
-        </Link>
-        <button className="w-full text-left px-3 py-2 rounded hover:bg-gray-200 flex items-center gap-2">
-          <IoLogOut className="w-4 h-4" />
-          Sign out
-        </button>
-      </div>
     </aside>
   );
 }

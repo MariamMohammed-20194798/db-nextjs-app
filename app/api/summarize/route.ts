@@ -12,6 +12,7 @@ const openai = new OpenAI({
   apiKey: apiKey as string,
 });
 console.log('OpenAI API key:', apiKey);
+
 // Function to fetch content from a URL
 async function fetchUrlContent(url: string): Promise<string> {
   try {
@@ -94,7 +95,7 @@ export async function POST(req: Request) {
     // Make the API call to OpenAI
     console.log('Sending request to OpenAI API');
     const response = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
+      model: 'gpt-4o-mini',
       messages: [
         {
           role: 'system',
