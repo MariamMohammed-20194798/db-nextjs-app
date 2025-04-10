@@ -13,6 +13,7 @@
     "@heroui/input": "^2.4.17",
     "@heroui/react": "^2.7.6",
     "@nextui-org/react": "^2.6.11",
+    "@supabase/supabase-js": "^2.49.4",
     "formidable": "^3.5.2",
     "framer-motion": "^12.6.3",
     "lucide-react": "^0.487.0",
