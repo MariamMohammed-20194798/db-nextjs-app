@@ -1,9 +1,266 @@
+'use client';
+import React, { useState, useEffect } from 'react';
+import { IoDocumentText } from 'react-icons/io5';
+import { FiDownload, FiTrash2 } from 'react-icons/fi';
+import { MdHistory } from 'react-icons/md';
+import { motion } from 'framer-motion';
+import HeaderSection from '../components/HeaderSection';
+
+interface VersionDocument {
+  id: string;
+  title: string;
+  content: string;
+  date: string;
+  wordCount: number;
+  trashedAt?: number;
+}
+
 export default function VersionHistoryPage() {
+  const [documents, setDocuments] = useState<VersionDocument[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchDocuments = async () => {
+    try {
+      setIsLoading(true);
+
+      // Get active documents from API
+      const response = await fetch('/api/documents/history');
+      let apiDocuments: VersionDocument[] = [];
+
+      if (response.ok) {
+        const data = await response.json();
+        apiDocuments = data.documents;
+      } else {
+        console.error('Failed to fetch documents:', await response.text());
+      }
+
+      // Get documents from localStorage
+      let localStorageDocuments: VersionDocument[] = [];
+      try {
+        const storedDocuments = localStorage.getItem('documents');
+        if (storedDocuments) {
+          localStorageDocuments = JSON.parse(storedDocuments);
+        }
+      } catch (error) {
+        console.error('Error parsing localStorage documents:', error);
+      }
+
+      // Combine and deduplicate documents by ID
+      const allDocuments = [...localStorageDocuments, ...apiDocuments];
+      const uniqueDocumentsMap = new Map();
+
+      allDocuments.forEach((doc) => {
+        // Only keep the first occurrence of each ID (newer documents from localStorage come first)
+        if (!uniqueDocumentsMap.has(doc.id)) {
+          uniqueDocumentsMap.set(doc.id, doc);
+        }
+      });
+
+      // Convert map back to array and sort by date (newest first)
+      const uniqueDocuments = Array.from(uniqueDocumentsMap.values());
+      uniqueDocuments.sort((a, b) => {
+        // Sort by ID as a fallback (higher ID = newer)
+        return parseInt(b.id) - parseInt(a.id);
+      });
+
+      setDocuments(uniqueDocuments);
+    } catch (error) {
+      console.error('Error fetching documents:', error);
+      setDocuments([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDocuments();
+
+    // Set up event listener for document saves
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'documentSaved') {
+        fetchDocuments();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    // Custom event for same-tab updates
+    const handleCustomEvent = () => fetchDocuments();
+    window.addEventListener('documentSaved', handleCustomEvent);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('documentSaved', handleCustomEvent);
+    };
+  }, []);
+
+  const handleDelete = async (id: string) => {
+    try {
+      // Find the document to move to trash
+      const documentToTrash = documents.find((doc) => doc.id === id);
+      if (!documentToTrash) {
+        throw new Error('Document not found');
+      }
+
+      // Add to trash with timestamp
+      const trashedDocument = {
+        ...documentToTrash,
+        trashedAt: Date.now(),
+      };
+
+      // Send to API trash
+      const trashResponse = await fetch('/api/documents/trash', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ document: trashedDocument }),
+      });
+
+      if (trashResponse.ok) {
+        // Add to localStorage trash
+        try {
+          const storedTrashedDocs = localStorage.getItem('trashedDocuments') || '[]';
+          const parsedTrashedDocs = JSON.parse(storedTrashedDocs);
+          parsedTrashedDocs.push(trashedDocument);
+          localStorage.setItem('trashedDocuments', JSON.stringify(parsedTrashedDocs));
+        } catch (error) {
+          console.error('Error updating localStorage trash:', error);
+        }
+
+        // Remove from active documents
+        setDocuments(documents.filter((doc) => doc.id !== id));
+
+        // Remove from localStorage active documents
+        try {
+          const storedDocuments = localStorage.getItem('documents');
+          if (storedDocuments) {
+            const parsedDocuments = JSON.parse(storedDocuments);
+            const updatedDocuments = parsedDocuments.filter(
+              (doc: VersionDocument) => doc.id !== id
+            );
+            localStorage.setItem('documents', JSON.stringify(updatedDocuments));
+          }
+        } catch (error) {
+          console.error('Error updating localStorage:', error);
+        }
+      } else {
+        console.error('Failed to add document to trash:', await trashResponse.text());
+      }
+    } catch (error) {
+      console.error('Error moving document to trash:', error);
+    }
+  };
+
+  const handleDownload = (document: VersionDocument) => {
+    // Create a blob with the document content
+    const blob = new Blob([document.content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+
+    // Create a temporary link and trigger the download
+    const a = global.document.createElement('a');
+    a.href = url;
+    a.download = `${document.title.replace(/\s+/g, '-')}.txt`;
+    global.document.body.appendChild(a);
+    a.click();
+
+    // Clean up
+    global.document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleRestore = async (id: string) => {
+    try {
+      // Get the document to restore
+      const documentToRestore = documents.find((doc) => doc.id === id);
+      if (!documentToRestore) {
+        throw new Error('Document not found');
+      }
+
+      // In a real app, you would dispatch an action or use context to restore to editor
+      // For demo, we'll just show a console message and alert
+      console.log(`Document ${id} restored:`, documentToRestore.content);
+      alert(`Document "${documentToRestore.title}" restored successfully!`);
+    } catch (error) {
+      console.error('Error restoring document:', error);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="p-4">
+        <h1 className="text-2xl font-semibold mb-4">Version History</h1>
+        <p>Loading documents...</p>
+      </div>
+    );
+  }
+
   return (
-    <div>
-      <h1 className="text-2xl font-semibold mb-4">Version History</h1>
-      {/* Add version history content here */}
-      <p>Placeholder content for Version History.</p>
+    <div className="max-w-4xl mx-auto px-6">
+      <HeaderSection
+        inline
+        className={'mb-5'}
+        title="Version History"
+        desc="Manage all your saved documents."
+        icon={<MdHistory className="w-10 h-10" />}
+        key={'kb-header'}
+      />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {documents.map((doc) => (
+          <motion.div
+            key={doc.id}
+            className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden"
+            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+          >
+            <div className="p-4">
+              <div className="text-xs text-gray-500 mb-1">{doc.date}</div>
+              <h3 className="text-lg font-medium mb-2">{doc.title}</h3>
+              <p className="text-sm text-gray-600 line-clamp-3">{doc.content}</p>
+            </div>
+
+            <div className="flex items-center justify-between p-2 border-t border-gray-100">
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-red-100 text-red-500">
+                <span>{doc.wordCount}</span>
+              </div>
+
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => handleDownload(doc)}
+                  className="p-2 text-gray-500 hover:text-gray-700"
+                  title="Download"
+                >
+                  <FiDownload />
+                </button>
+                <button
+                  onClick={() => handleRestore(doc.id)}
+                  className="p-2 text-gray-500 hover:text-gray-700"
+                  title="Restore"
+                >
+                  <IoDocumentText />
+                </button>
+                <button
+                  onClick={() => handleDelete(doc.id)}
+                  className="p-2 text-gray-500 hover:text-red-500"
+                  title="Move to Trash"
+                >
+                  <FiTrash2 />
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      {documents.length === 0 && (
+        <div className="text-center py-12">
+          <IoDocumentText className="mx-auto h-12 w-12 text-gray-400" />
+          <h3 className="mt-2 text-lg font-medium text-gray-900">No documents</h3>
+          <p className="mt-1 text-sm text-gray-500">
+            You haven't saved any documents yet.
+          </p>
+        </div>
+      )}
     </div>
   );
 }

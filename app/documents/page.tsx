@@ -1,16 +1,15 @@
 'use client';
 import React from 'react';
-import Image from 'next/image';
-import HeaderSection from './components/HeaderSection';
+import HeaderSection from '../components/HeaderSection';
 import { IoDocumentText } from 'react-icons/io5';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CgClose, CgWebsite } from 'react-icons/cg';
-import { FaFilePdf, FaQuestion } from 'react-icons/fa';
+import { CgWebsite } from 'react-icons/cg';
+import { FaFilePdf } from 'react-icons/fa';
 import { BsFileEarmarkText } from 'react-icons/bs';
-import AddSourceTextDoc from './components/AddSourceTextDoc';
-import AddSourceFile from './components/AddSourceFile';
-import AddSourceUrl from './components/AddSourceUrl';
-// Removed the import for Button from '@nextui-org/react' due to the error
+import AddSourceTextDoc from '../components/AddSourceTextDoc';
+import AddSourceFile from '../components/AddSourceFile';
+import AddSourceUrl from '../components/AddSourceUrl';
+
 export default function Home() {
   const sources = [
     {
@@ -35,7 +34,7 @@ export default function Home() {
 
   const [selectedSourceIndex, setSourceIndex] = React.useState(0);
   return (
-    <div>
+    <div className="max-w-4xl mx-auto px-6">
       <motion.div
         key="header-upload-vf-doc"
         layout
@@ -59,7 +58,7 @@ export default function Home() {
           <button
             className={`flex gap-2 justify-center items-center px-2 py-1 rounded-md transition-colors ${
               selectedSourceIndex === index
-                ? 'bg-blue-500 text-white'
+                ? 'bg-pink-800 text-white'
                 : 'bg-gray-100 hover:bg-gray-200'
             }`}
             key={`kb_add_source_index_${index}`}

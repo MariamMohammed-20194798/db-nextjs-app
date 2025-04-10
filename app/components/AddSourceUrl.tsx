@@ -3,7 +3,7 @@ import { Textarea } from '@heroui/input';
 import { Button } from '@heroui/button';
 import SummarizeButton from './SummarizeButton';
 
-const AddSourceTextDoc = () => {
+const AddSourceUrl = () => {
   const [docText, setDocText] = React.useState('');
   const [docName, setDocName] = React.useState('');
   const [docDescription, setDocDesc] = React.useState('' as string);
@@ -15,19 +15,11 @@ const AddSourceTextDoc = () => {
         value={docName}
         onChange={(e) => setDocName(e.target.value)}
         className="w-full p-4 text-base border border-gray-200 rounded-md outline-none"
-        placeholder="Document Name"
+        placeholder="URL"
       />
-      <Textarea
-        value={docText}
-        onChange={(e) => setDocText(e.target.value)}
-        className="w-full min-h-[200px] text-base border border-gray-200 rounded-md outline-none"
-        labelPlacement="outside"
-        placeholder="Document Content"
-        style={{ outline: 'none', appearance: 'none' }}
-      />
-      <SummarizeButton content={docText} type="text" isDisabled={!docText.trim()} />
+      <SummarizeButton content={docName} type="url" isDisabled={!docName.trim()} />
     </div>
   );
 };
 
-export default AddSourceTextDoc;
+export default AddSourceUrl;
