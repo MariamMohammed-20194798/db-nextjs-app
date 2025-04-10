@@ -56,15 +56,6 @@ export default function Sidebar() {
           <IoTrash className="w-4 h-4" />
           Trash
         </Link>
-        <Link
-          href="/account"
-          className={`px-3 py-2 rounded flex items-center gap-2 ${
-            pathname === '/account' ? 'bg-gray-200' : 'hover:bg-gray-200'
-          }`}
-        >
-          <IoPerson className="w-4 h-4" />
-          Account
-        </Link>
       </nav>
     </aside>
   );
