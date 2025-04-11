@@ -9,6 +9,8 @@ interface HistoryDocument {
   wordCount: number;
 }
 
+// Maximum number of versions to keep
+const MAX_VERSIONS = 9;
 const sampleDocuments: HistoryDocument[] = [];
 
 export async function GET() {
@@ -42,6 +44,17 @@ export async function POST(req: Request) {
       }),
       wordCount: content.split(/\s+/).length,
     };
+
+    // Add the new document to the array
+    sampleDocuments.push(newDocument);
+
+    // Keep only the 9 most recent documents
+    if (sampleDocuments.length > MAX_VERSIONS) {
+      // Sort by ID (timestamp) descending, then remove the oldest ones
+      sampleDocuments.sort((a, b) => parseInt(b.id) - parseInt(a.id));
+      // Keep only the MAX_VERSIONS most recent documents
+      sampleDocuments.splice(MAX_VERSIONS);
+    }
 
     // In a real app, you would save this to a database
     // The client will handle saving to localStorage

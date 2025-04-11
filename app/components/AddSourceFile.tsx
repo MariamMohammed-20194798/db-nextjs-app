@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { BsCloudUpload } from 'react-icons/bs';
-import DocumentOptions from './DocumentOptions';
+import SummarizeButton from './SummarizeButton';
 
 interface AddSourceFileProps {
   onFilesAdded: (files: File[]) => void;
@@ -186,7 +186,7 @@ const AddSourceFile: React.FC<AddSourceFileProps> = ({
       <div
         ref={dropRef}
         className={`border-2 border-dashed rounded-md p-8 transition-colors flex flex-col items-center justify-center cursor-pointer ${
-          isDragging ? 'border-blue-500 bg-blue-900/10' : 'border-pink-800'
+          isDragging ? 'border-blue-500 bg-blue-900/10' : 'dark:border-pink-800'
         }`}
         onDragEnter={handleDragEnter}
         onDragOver={handleDragOver}
@@ -222,13 +222,13 @@ const AddSourceFile: React.FC<AddSourceFileProps> = ({
       {uploadedFile && (
         <>
           <div className="mt-4 p-3 bg-gray-100 border border-gray-200 rounded-md">
-            <p className="text-sm font-medium">{uploadedFile.name}</p>
+            <p className="text-sm text-black font-medium">{uploadedFile.name}</p>
             <p className="text-xs text-gray-500 mb-2">
               {(uploadedFile.size / 1024).toFixed(2)} KB •{' '}
               {uploadedFile.type || 'Unknown type'}
             </p>
           </div>
-          <DocumentOptions content={fileContent} type="file" isDisabled={!fileContent} />
+          <SummarizeButton content={fileContent} type="file" isDisabled={!fileContent} />
         </>
       )}
     </div>

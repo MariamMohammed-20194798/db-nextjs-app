@@ -6,6 +6,9 @@ import { MdHistory } from 'react-icons/md';
 import { motion } from 'framer-motion';
 import HeaderSection from '../components/HeaderSection';
 
+// Maximum number of versions to keep
+const MAX_VERSIONS = 9;
+
 interface VersionDocument {
   id: string;
   title: string;
@@ -15,9 +18,15 @@ interface VersionDocument {
   trashedAt?: number;
 }
 
+interface SuccessMessage {
+  text: string;
+  type: 'success' | 'error';
+}
+
 export default function VersionHistoryPage() {
   const [documents, setDocuments] = useState<VersionDocument[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [successMessage, setSuccessMessage] = useState<SuccessMessage | null>(null);
 
   const fetchDocuments = async () => {
     try {
@@ -63,7 +72,17 @@ export default function VersionHistoryPage() {
         return parseInt(b.id) - parseInt(a.id);
       });
 
-      setDocuments(uniqueDocuments);
+      // Enforce the MAX_VERSIONS limit
+      const limitedDocuments = uniqueDocuments.slice(0, MAX_VERSIONS);
+
+      // Update localStorage to maintain the limit
+      try {
+        localStorage.setItem('documents', JSON.stringify(limitedDocuments));
+      } catch (error) {
+        console.error('Error updating localStorage:', error);
+      }
+
+      setDocuments(limitedDocuments);
     } catch (error) {
       console.error('Error fetching documents:', error);
       setDocuments([]);
@@ -144,11 +163,30 @@ export default function VersionHistoryPage() {
         } catch (error) {
           console.error('Error updating localStorage:', error);
         }
+
+        // Show success message
+        setSuccessMessage({
+          text: `Document "${trashedDocument.id}" moved to trash.`,
+          type: 'success',
+        });
+
+        // Clear message after 3 seconds
+        setTimeout(() => setSuccessMessage(null), 3000);
       } else {
         console.error('Failed to add document to trash:', await trashResponse.text());
+        setSuccessMessage({
+          text: 'Failed to move document to trash.',
+          type: 'error',
+        });
+        setTimeout(() => setSuccessMessage(null), 3000);
       }
     } catch (error) {
       console.error('Error moving document to trash:', error);
+      setSuccessMessage({
+        text: 'Error moving document to trash.',
+        type: 'error',
+      });
+      setTimeout(() => setSuccessMessage(null), 3000);
     }
   };
 
@@ -167,6 +205,15 @@ export default function VersionHistoryPage() {
     // Clean up
     global.document.body.removeChild(a);
     URL.revokeObjectURL(url);
+
+    // Show success message
+    setSuccessMessage({
+      text: `Document ${document.id} downloaded successfully.`,
+      type: 'success',
+    });
+
+    // Clear message after 3 seconds
+    setTimeout(() => setSuccessMessage(null), 3000);
   };
 
   if (isLoading) {
@@ -188,18 +235,33 @@ export default function VersionHistoryPage() {
         icon={<MdHistory className="w-10 h-10" />}
         key={'kb-header'}
       />
+      {successMessage && (
+        <div
+          className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm transition-opacity duration-300 ${
+            successMessage.type === 'success'
+              ? 'bg-green-100 border-l-4 border-green-500 text-green-700'
+              : 'bg-red-100 border-l-4 border-red-500 text-red-700'
+          }`}
+        >
+          <div className="flex items-center">
+            <div className="py-1">
+              <p className="font-medium">{successMessage.text}</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {documents.map((doc) => (
           <motion.div
             key={doc.id}
-            className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden"
+            className="bg-gray-700 rounded-lg border border-gray-200 shadow-sm overflow-hidden"
             whileHover={{ y: -5, transition: { duration: 0.2 } }}
           >
             <div className="p-4">
-              <div className="text-xs text-gray-500 mb-1">{doc.date}</div>
+              <div className="text-xs text-gray-400 mb-1">{doc.date}</div>
               <h3 className="text-lg font-medium mb-2">{doc.title}</h3>
-              <p className="text-sm text-gray-600 line-clamp-3">{doc.content}</p>
+              <p className="text-sm text-gray-400 line-clamp-3">{doc.content}</p>
             </div>
 
             <div className="flex items-center justify-between p-2 border-t border-gray-100">
@@ -210,14 +272,14 @@ export default function VersionHistoryPage() {
               <div className="flex space-x-2">
                 <button
                   onClick={() => handleDownload(doc)}
-                  className="p-2 text-gray-500 hover:text-gray-700"
+                  className="p-2 text-gray-400 hover:text-red-500"
                   title="Download"
                 >
                   <FiDownload />
                 </button>
                 <button
                   onClick={() => handleDelete(doc.id)}
-                  className="p-2 text-gray-500 hover:text-red-500"
+                  className="p-2 text-gray-400 hover:text-red-500"
                   title="Move to Trash"
                 >
                   <FiTrash2 />

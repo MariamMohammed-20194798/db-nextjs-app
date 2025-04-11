@@ -1,8 +1,7 @@
 import React from 'react';
 import { Textarea } from '@heroui/input';
 import { Button } from '@heroui/button';
-import DocumentOptions from './DocumentOptions';
-
+import SummarizeButton from './SummarizeButton';
 const AddSourceTextDoc = () => {
   const [docText, setDocText] = React.useState('');
   const [docName, setDocName] = React.useState('');
@@ -18,14 +17,13 @@ const AddSourceTextDoc = () => {
         placeholder="Document Name"
       />
       <textarea
-        className="w-full p-3 border border-gray-200 rounded mb-4 text-black outline-none resize-none"
+        className="w-full p-3 border border-gray-200 rounded mb-4 text-white outline-none resize-none"
         value={docText}
         onChange={(e) => setDocText(e.target.value)}
         placeholder="Document Content"
         rows={4}
       />
-
-      <DocumentOptions content={docText} type="text" isDisabled={!docText.trim()} />
+      <SummarizeButton content={docText} type="text" isDisabled={!docText.trim()} />
     </div>
   );
 };

@@ -13,9 +13,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       {/* Use flexbox to create the sidebar layout */}
-      <body className="flex overflow-hidden">
+      <body className="flex h-screen overflow-hidden dark:bg-gray-800 text-gray-900 dark:text-white">
         <Sidebar />
-        <main className="flex-1 min-h-screen overflow-y-auto p-4 sm:p-8 md:p-12">
+        <main className="flex-1 h-screen overflow-y-auto p-4 sm:p-8 md:p-12 dark:bg-gray-800 text-gray-900 dark:text-white">
           {children}
         </main>
       </body>

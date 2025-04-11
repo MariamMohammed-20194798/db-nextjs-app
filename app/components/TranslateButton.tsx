@@ -1,30 +1,38 @@
 import React, { useState } from 'react';
 
+// Maximum number of versions to keep
+const MAX_VERSIONS = 9;
+
 interface TranslateButtonProps {
   content: string;
   type: 'text' | 'file' | 'url';
   isDisabled?: boolean;
+  sourceLanguage?: string;
+  targetLanguage?: string;
+  onTranslate?: (translatedText: string) => void;
 }
 
 const TranslateButton: React.FC<TranslateButtonProps> = ({
   content,
   type,
   isDisabled = false,
+  sourceLanguage = 'en',
+  targetLanguage = 'es',
+  onTranslate,
 }) => {
-  const [translation, setTranslation] = useState<string>('');
-  const [targetLanguage, setTargetLanguage] = useState<string>('spanish');
-  const [loading, setLoading] = useState<boolean>(false);
+  const [translatedText, setTranslatedText] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [showTranslation, setShowTranslation] = useState<boolean>(false);
   const [savingToHistory, setSavingToHistory] = useState<boolean>(false);
   const [saveSuccess, setSaveSuccess] = useState<boolean>(false);
 
   const handleTranslate = async () => {
-    if (!content || isDisabled) return;
+    if (!content.trim() || isDisabled) return;
 
-    setLoading(true);
+    setIsLoading(true);
     setError(null);
-    setTranslation('');
+    setTranslatedText('');
     setSaveSuccess(false);
 
     try {
@@ -45,25 +53,22 @@ const TranslateButton: React.FC<TranslateButtonProps> = ({
         }),
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to translate content');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Translation failed');
       }
 
-      if (!data.translation) {
-        throw new Error('No translation was generated');
-      }
-
-      setTranslation(data.translation);
+      const data = await response.json();
+      setTranslatedText(data.translation);
       setShowTranslation(true);
-    } catch (err) {
-      console.error('Error during translation:', err);
+      onTranslate?.(data.translation);
+    } catch (error) {
+      console.error('Translation error:', error);
       setError(
-        err instanceof Error ? err.message : 'An error occurred during translation'
+        error instanceof Error ? error.message : 'Translation failed. Please try again.'
       );
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -73,7 +78,7 @@ const TranslateButton: React.FC<TranslateButtonProps> = ({
   };
 
   const handleSaveToHistory = async () => {
-    if (!translation) return;
+    if (!translatedText) return;
 
     setSavingToHistory(true);
     setSaveSuccess(false);
@@ -82,8 +87,8 @@ const TranslateButton: React.FC<TranslateButtonProps> = ({
       // Generate a title from the first line of the translation or first few words
       const title =
         `Translation to ${targetLanguage}: ` +
-        (translation.split('\n')[0].substring(0, 40) ||
-          translation.split(' ').slice(0, 5).join(' ') + '...');
+        (translatedText.split('\n')[0].substring(0, 40) ||
+          translatedText.split(' ').slice(0, 5).join(' ') + '...');
 
       const response = await fetch('/api/documents/history', {
         method: 'POST',
@@ -92,7 +97,7 @@ const TranslateButton: React.FC<TranslateButtonProps> = ({
         },
         body: JSON.stringify({
           title,
-          content: translation,
+          content: translatedText,
         }),
       });
 
@@ -109,6 +114,11 @@ const TranslateButton: React.FC<TranslateButtonProps> = ({
 
         // Add new document to the beginning of the array
         existingDocuments.unshift(data.document);
+
+        // Limit to MAX_VERSIONS
+        if (existingDocuments.length > MAX_VERSIONS) {
+          existingDocuments.splice(MAX_VERSIONS);
+        }
 
         // Save back to localStorage
         localStorage.setItem('documents', JSON.stringify(existingDocuments));
@@ -133,39 +143,39 @@ const TranslateButton: React.FC<TranslateButtonProps> = ({
   };
 
   return (
-    <div className="w-full">
-      <div className="flex gap-2 mb-2">
-        <select
-          value={targetLanguage}
-          onChange={(e) => setTargetLanguage(e.target.value)}
-          className="px-3 py-2 border border-gray-300 rounded-md text-sm"
-        >
-          <option value="arabic">Arabic</option>
-          <option value="spanish">Spanish</option>
-          <option value="french">French</option>
-          <option value="german">German</option>
-          <option value="italian">Italian</option>
-          <option value="portuguese">Portuguese</option>
-          <option value="chinese">Chinese</option>
-          <option value="japanese">Japanese</option>
-          <option value="russian">Russian</option>
-        </select>
-
+    <div className="flex flex-col gap-2">
+      <div className="flex gap-2">
         <button
           onClick={handleTranslate}
-          disabled={isDisabled || !content || loading}
-          className={`flex-1 py-2 px-4 rounded-md transition-colors ${
-            isDisabled || !content
-              ? 'bg-gray-300 cursor-not-allowed'
-              : loading
-              ? 'bg-gray-500'
-              : 'bg-pink-800 hover:bg-pink-700 text-white'
+          disabled={isDisabled || isLoading}
+          className={`px-4 py-2 rounded-md transition-colors ${
+            isDisabled || isLoading
+              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              : 'dark:bg-pink-900 hover:bg-pink-700 text-white'
           }`}
         >
-          {loading ? 'Translating...' : 'Translate Content'}
+          {isLoading ? 'Translating...' : 'Translate'}
         </button>
+        {showTranslation && translatedText && (
+          <button
+            onClick={handleSaveToHistory}
+            disabled={savingToHistory}
+            className={`px-4 py-2 rounded-md text-sm ${
+              saveSuccess
+                ? 'bg-green-800 text-white cursor-default'
+                : savingToHistory
+                ? 'bg-gray-400 text-white cursor-wait'
+                : 'bg-pink-800 hover:bg-pink-700 text-white'
+            }`}
+          >
+            {saveSuccess
+              ? 'Saved to History.'
+              : savingToHistory
+              ? 'Saving...'
+              : 'Save to History'}
+          </button>
+        )}
       </div>
-
       {error && (
         <div className="mt-2 p-2 bg-red-100 border border-red-300 text-red-800 rounded">
           <p className="font-medium">Error:</p>
@@ -174,40 +184,6 @@ const TranslateButton: React.FC<TranslateButtonProps> = ({
             Please check if your API key is valid and properly configured.
           </p>
         </div>
-      )}
-
-      {showTranslation && translation && (
-        <>
-          <div className="mt-4 p-4 bg-gray-100 border border-gray-200 rounded-md relative">
-            <button
-              onClick={closeTranslation}
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-            >
-              ✕
-            </button>
-            <h3 className="font-medium mb-2">Translation ({targetLanguage}):</h3>
-            <p className="text-sm">{translation}</p>
-          </div>
-          <div className="mt-4 flex justify-end">
-            <button
-              onClick={handleSaveToHistory}
-              disabled={savingToHistory}
-              className={`px-4 py-1.5 rounded text-sm ${
-                saveSuccess
-                  ? 'bg-green-600 text-white cursor-default'
-                  : savingToHistory
-                  ? 'bg-gray-400 text-white cursor-wait'
-                  : 'bg-pink-800 hover:bg-pink-700 text-white'
-              }`}
-            >
-              {saveSuccess
-                ? 'Saved to History.'
-                : savingToHistory
-                ? 'Saving...'
-                : 'Save to History'}
-            </button>
-          </div>
-        </>
       )}
     </div>
   );

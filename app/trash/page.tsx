@@ -102,7 +102,6 @@ export default function TrashPage() {
 
   const handleRestoreFromTrash = async (id: string) => {
     try {
-      // Find the document in trash
       const documentToRestore = trashedDocuments.find((doc) => doc.id === id);
       if (!documentToRestore) {
         throw new Error('Document not found in trash');
@@ -144,7 +143,7 @@ export default function TrashPage() {
 
         // Show success message
         setSuccessMessage({
-          text: `"${documentToRestore.title}" has been restored successfully.`,
+          text: `Document ID: ${documentToRestore.id} restored successfully.`,
           type: 'success',
         });
       } else {
@@ -194,7 +193,7 @@ export default function TrashPage() {
 
         // Show success message
         setSuccessMessage({
-          text: `"${documentTitle}" has been permanently deleted.`,
+          text: `Document ID: ${documentToDelete?.id} permanently deleted.`,
           type: 'success',
         });
       } else {
@@ -254,20 +253,20 @@ export default function TrashPage() {
         {trashedDocuments.map((doc) => (
           <motion.div
             key={doc.id}
-            className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden"
+            className="bg-gray-700 rounded-lg border border-gray-200 shadow-sm overflow-hidden"
             whileHover={{ y: -5, transition: { duration: 0.2 } }}
           >
             <div className="p-4">
               <div className="flex justify-between items-center mb-1">
                 <div className="text-xs text-gray-500">{doc.date}</div>
-                <div className="text-xs text-red-500">
+                <div className="text-xs text-red-400">
                   Expires in{' '}
                   {Math.ceil(24 - (Date.now() - (doc.trashedAt || 0)) / (60 * 60 * 1000))}{' '}
                   hours
                 </div>
               </div>
               <h3 className="text-lg font-medium mb-2">{doc.title}</h3>
-              <p className="text-sm text-gray-600 line-clamp-3">{doc.content}</p>
+              <p className="text-sm text-gray-400 line-clamp-3">{doc.content}</p>
             </div>
 
             <div className="flex items-center justify-between p-2 border-t border-gray-100">
@@ -278,10 +277,10 @@ export default function TrashPage() {
               <div className="flex space-x-2">
                 <button
                   onClick={() => handleRestoreFromTrash(doc.id)}
-                  className="p-2 text-gray-500 hover:text-green-700"
+                  className="p-2 text-gray-500 hover:text-red-700"
                   title="Restore from trash"
                 >
-                  <MdRestore className="w-4 h-4" />
+                  <MdRestore className="w-5 h-5" />
                 </button>
                 <button
                   onClick={() => handlePermanentDelete(doc.id)}
@@ -297,9 +296,9 @@ export default function TrashPage() {
       </div>
 
       {trashedDocuments.length === 0 && (
-        <div className="text-center py-12">
-          <FiTrash2 className="mx-auto h-12 w-12 text-gray-400" />
-          <h3 className="mt-2 text-lg font-medium text-gray-900">Trash is empty</h3>
+        <div className="text-center py-50">
+          <FiTrash2 className="mx-auto h-10 w-10 text-gray-400" />
+          <h3 className="mt-2 text-lg font-medium text-gray-400">Trash is empty</h3>
           <p className="mt-1 text-sm text-gray-500">No documents in trash.</p>
         </div>
       )}

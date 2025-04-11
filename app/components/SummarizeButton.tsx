@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 
+// Maximum number of versions to keep
+const MAX_VERSIONS = 9;
+
 interface SummarizeButtonProps {
   content: string;
   type: 'text' | 'file' | 'url';
@@ -107,6 +110,11 @@ const SummarizeButton: React.FC<SummarizeButtonProps> = ({
         // Add new document to the beginning of the array
         existingDocuments.unshift(data.document);
 
+        // Limit to MAX_VERSIONS
+        if (existingDocuments.length > MAX_VERSIONS) {
+          existingDocuments.splice(MAX_VERSIONS);
+        }
+
         // Save back to localStorage
         localStorage.setItem('documents', JSON.stringify(existingDocuments));
 
@@ -136,10 +144,10 @@ const SummarizeButton: React.FC<SummarizeButtonProps> = ({
         disabled={isDisabled || !content || loading}
         className={`mt-4 w-full py-2 px-4 rounded-md transition-colors ${
           isDisabled || !content
-            ? 'bg-gray-300 cursor-not-allowed'
+            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
             : loading
             ? 'bg-gray-500'
-            : 'bg-pink-800 hover:bg-pink-700 text-white'
+            : 'dark:bg-pink-900 hover:bg-pink-700 text-white'
         }`}
       >
         {loading ? 'Summarizing...' : 'Summarize Content'}
@@ -165,7 +173,7 @@ const SummarizeButton: React.FC<SummarizeButtonProps> = ({
               ✕
             </button>
             <h3 className="font-medium mb-2">Summary:</h3>
-            <p className="text-sm">{summary}</p>
+            <p className="text-sm text-black">{summary}</p>
           </div>
           <div className="mt-4 flex justify-end">
             <button
@@ -173,7 +181,7 @@ const SummarizeButton: React.FC<SummarizeButtonProps> = ({
               disabled={savingToHistory}
               className={`px-4 py-1.5 rounded text-sm ${
                 saveSuccess
-                  ? 'bg-green-600 text-white cursor-default'
+                  ? 'bg-green-800 text-white cursor-default'
                   : savingToHistory
                   ? 'bg-gray-400 text-white cursor-wait'
                   : 'bg-pink-800 hover:bg-pink-700 text-white'

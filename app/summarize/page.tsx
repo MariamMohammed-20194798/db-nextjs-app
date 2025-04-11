@@ -43,10 +43,10 @@ export default function Home() {
         <HeaderSection
           inline
           className={'mb-5'}
-          title="Add a data source"
-          desc={`Select a data type to add and our systems will magically handle the rest.`}
+          title="Summarize"
+          desc={`Generate concise summaries of your text.`}
           icon={<IoDocumentText className="w-10 h-10" />}
-          key={'kb-header'}
+          key={'summarize-header'}
         />
       </motion.div>
       <motion.div
@@ -58,8 +58,8 @@ export default function Home() {
           <button
             className={`flex gap-2 justify-center items-center px-2 py-1 rounded-md transition-colors ${
               selectedSourceIndex === index
-                ? 'bg-pink-800 text-white'
-                : 'bg-gray-100 hover:bg-gray-200'
+                ? 'dark:bg-pink-900 text-white'
+                : 'dark:bg-gray-700 hover:scale-105'
             }`}
             key={`kb_add_source_index_${index}`}
             onClick={() => setSourceIndex(index)}
