@@ -172,7 +172,7 @@ const SummarizeButton: React.FC<SummarizeButtonProps> = ({
             >
               ✕
             </button>
-            <h3 className="font-medium mb-2">Summary:</h3>
+            <h3 className="font-medium mb-2 text-black">Summary:</h3>
             <p className="text-sm text-black">{summary}</p>
           </div>
           <div className="mt-4 flex justify-end">

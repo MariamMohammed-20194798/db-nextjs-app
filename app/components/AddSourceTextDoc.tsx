@@ -21,7 +21,7 @@ const AddSourceTextDoc = () => {
         value={docText}
         onChange={(e) => setDocText(e.target.value)}
         placeholder="Document Content"
-        rows={4}
+        rows={8}
       />
       <SummarizeButton content={docText} type="text" isDisabled={!docText.trim()} />
     </div>

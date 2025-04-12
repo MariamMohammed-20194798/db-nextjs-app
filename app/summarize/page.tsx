@@ -34,7 +34,7 @@ export default function Home() {
 
   const [selectedSourceIndex, setSourceIndex] = React.useState(0);
   return (
-    <div className="max-w-4xl mx-auto px-6">
+    <div className="max-w-4xl mx-auto">
       <motion.div
         key="header-upload-vf-doc"
         layout

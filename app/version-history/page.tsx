@@ -5,6 +5,7 @@ import { FiDownload, FiTrash2 } from 'react-icons/fi';
 import { MdHistory } from 'react-icons/md';
 import { motion } from 'framer-motion';
 import HeaderSection from '../components/HeaderSection';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 
 // Maximum number of versions to keep
 const MAX_VERSIONS = 9;
@@ -218,15 +219,14 @@ export default function VersionHistoryPage() {
 
   if (isLoading) {
     return (
-      <div className="p-4">
-        <h1 className="text-2xl font-semibold mb-4">Version History</h1>
-        <p>Loading documents...</p>
+      <div className="flex items-center justify-center mt-50">
+        <AiOutlineLoading3Quarters className="animate-spin text-gray-400 w-8 h-8" />
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-6">
+    <div className="max-w-4xl mx-auto">
       <HeaderSection
         inline
         className={'mb-5'}
@@ -293,7 +293,7 @@ export default function VersionHistoryPage() {
       {documents.length === 0 && (
         <div className="text-center py-12">
           <IoDocumentText className="mx-auto h-12 w-12 text-gray-400" />
-          <h3 className="mt-2 text-lg font-medium text-gray-900">No documents</h3>
+          <h3 className="mt-2 text-lg font-medium text-gray-400">No documents</h3>
           <p className="mt-1 text-sm text-gray-500">
             You haven't saved any documents yet.
           </p>

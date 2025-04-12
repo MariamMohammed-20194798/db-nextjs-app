@@ -4,31 +4,39 @@ import HeaderSection from '../components/HeaderSection';
 import { IoLanguage } from 'react-icons/io5';
 import TranslateButton from '../components/TranslateButton';
 import { Dropdown, DropdownMenu, DropdownItem, DropdownTrigger } from '@nextui-org/react';
+import Image from 'next/image';
 
 export default function TranslatorPage() {
   const [sourceText, setSourceText] = useState('');
   const [sourceLanguage, setSourceLanguage] = useState('en');
-  const [targetLanguage, setTargetLanguage] = useState('es');
+  const [targetLanguage, setTargetLanguage] = useState('ar');
   const [translatedText, setTranslatedText] = useState('');
   const [sourceLanguageLabel, setSourceLanguageLabel] = useState('English');
-  const [targetLanguageLabel, setTargetLanguageLabel] = useState('Spanish');
+  const [targetLanguageLabel, setTargetLanguageLabel] = useState('Arabic');
 
   const languages = [
-    { value: 'en', label: 'English' },
-    { value: 'es', label: 'Spanish' },
-    { value: 'fr', label: 'French' },
-    { value: 'de', label: 'German' },
-    { value: 'it', label: 'Italian' },
-    { value: 'ja', label: 'Japanese' },
-    { value: 'zh', label: 'Chinese' },
-    { value: 'ar', label: 'Arabic' },
-    { value: 'pt', label: 'Portuguese' },
-    { value: 'ru', label: 'Russian' },
-    { value: 'tr', label: 'Turkish' },
+    { value: 'en', label: 'English', country: 'us' },
+    { value: 'ar', label: 'Arabic', country: 'sa' },
+    { value: 'es', label: 'Spanish', country: 'es' },
+    { value: 'fr', label: 'French', country: 'fr' },
+    { value: 'de', label: 'German', country: 'de' },
+    { value: 'it', label: 'Italian', country: 'it' },
+    { value: 'ja', label: 'Japanese', country: 'jp' },
+    { value: 'zh', label: 'Chinese', country: 'cn' },
+    { value: 'pt', label: 'Portuguese', country: 'pt' },
+    { value: 'ru', label: 'Russian', country: 'ru' },
+    { value: 'tr', label: 'Turkish', country: 'tr' },
   ];
+  // Find current source and target language objects
+  const currentSourceLang =
+    languages.find((lang) => lang.value === sourceLanguage) || languages[0];
+  const currentTargetLang =
+    languages.find((lang) => lang.value === targetLanguage) || languages[1];
+
+  console.log(currentTargetLang);
 
   return (
-    <div className="max-w-4xl mx-auto px-6">
+    <div className="max-w-4xl mx-auto">
       <HeaderSection
         inline
         className={'mb-5'}
@@ -45,27 +53,48 @@ export default function TranslatorPage() {
               Source Text
             </p>
             <textarea
-              className="w-full h-64 p-3 border border-gray-300 rounded-md focus:ring-pink-500 focus:border-pink-500 text-white resize-none"
+              className="w-full h-64 p-3 border border-gray-300 rounded-md focus:border-none text-white resize-none thin-scrollbar"
               placeholder="Enter text to translate..."
               value={sourceText}
               onChange={(e) => setSourceText(e.target.value)}
             />
+            <style jsx global>{`
+              .thin-scrollbar::-webkit-scrollbar {
+                width: 10px;
+              }
+              .thin-scrollbar::-webkit-scrollbar-track {
+                background: #4b5563;
+              }
+              .thin-scrollbar::-webkit-scrollbar-thumb {
+                background-color: #9ca3af;
+                border-radius: 4px;
+              }
+            `}</style>
           </div>
           <div>
             <p className="font-bold text-large leading-5 line-clamp-1 text-white mb-1">
               Translated Text
             </p>
-            <div className="w-full h-64 p-3 border border-gray-300 rounded-md focus:ring-pink-500 focus:border-pink-500 text-white resize-none">
+            <div className="w-full h-64 p-3 border border-gray-300 rounded-md focus:ring-pink-500 focus:border-pink-500 text-white resize-none thin-scrollbar overflow-auto">
               {translatedText}
             </div>
           </div>
         </div>
         <div className="mt-4 flex justify-between items-center">
-          <div className="flex gap-10">
+          <div className="flex gap-3">
+            <p className="text-white mt-2 ml-5 font-bold">From:</p>
+
             <Dropdown className="bg-gray-700 border border-gray-300 rounded-md p-2 text-white">
               <DropdownTrigger>
-                <button className="border border-gray-300 rounded-md p-2 text-white">
-                  {sourceLanguageLabel}
+                <button className="border border-gray-300 rounded-md p-2 text-white flex items-center gap-2">
+                  <img
+                    src={`https://flagcdn.com/w20/${currentSourceLang.country}.png`}
+                    alt={`${currentSourceLang.label} flag`}
+                    width={20}
+                    height={15}
+                    className="rounded-sm"
+                  />
+                  <span>{sourceLanguageLabel}</span>
                 </button>
               </DropdownTrigger>
               <DropdownMenu aria-label="Source Languages">
@@ -78,16 +107,34 @@ export default function TranslatorPage() {
                       setSourceLanguageLabel(language.label);
                     }}
                   >
-                    {language.label}
+                    <div className="flex items-center gap-2">
+                      <img
+                        src={`https://flagcdn.com/w20/${language.country}.png`}
+                        alt={`${language.label} flag`}
+                        width={20}
+                        height={15}
+                        className="rounded-sm"
+                      />
+                      <span>{language.label}</span>
+                    </div>
                   </DropdownItem>
                 ))}
               </DropdownMenu>
             </Dropdown>
 
+            <p className="text-white mt-2 ml-8 font-bold">To:</p>
+
             <Dropdown className="bg-gray-700 border border-gray-300 rounded-md p-2 text-white">
               <DropdownTrigger>
-                <button className="border border-gray-300 rounded-md p-2 text-white">
-                  {targetLanguageLabel}
+                <button className="border border-gray-300 rounded-md p-2 text-white flex items-center gap-2">
+                  <img
+                    src={`https://flagcdn.com/w20/${currentTargetLang.country}.png`}
+                    alt={`${currentTargetLang.label} flag`}
+                    width={20}
+                    height={15}
+                    className="rounded-sm"
+                  />
+                  <span>{targetLanguageLabel}</span>
                 </button>
               </DropdownTrigger>
               <DropdownMenu aria-label="Target Languages">
@@ -100,7 +147,16 @@ export default function TranslatorPage() {
                       setTargetLanguageLabel(language.label);
                     }}
                   >
-                    {language.label}
+                    <div className="flex items-center gap-2">
+                      <img
+                        src={`https://flagcdn.com/w20/${language.country}.png`}
+                        alt={`${language.label} flag`}
+                        width={20}
+                        height={15}
+                        className="rounded-sm"
+                      />
+                      <span>{language.label}</span>
+                    </div>
                   </DropdownItem>
                 ))}
               </DropdownMenu>

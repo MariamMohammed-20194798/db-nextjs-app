@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { FiTrash2 } from 'react-icons/fi';
 import { MdRestore } from 'react-icons/md';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import { motion } from 'framer-motion';
 import HeaderSection from '../components/HeaderSection';
 
@@ -214,15 +215,14 @@ export default function TrashPage() {
 
   if (isLoading) {
     return (
-      <div className="p-4">
-        <h1 className="text-2xl font-semibold mb-4">Trash</h1>
-        <p>Loading documents...</p>
+      <div className="flex items-center justify-center mt-50">
+        <AiOutlineLoading3Quarters className="animate-spin text-gray-400 w-8 h-8" />
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-6">
+    <div className="max-w-4xl mx-auto">
       <HeaderSection
         inline
         className={'mb-5'}
