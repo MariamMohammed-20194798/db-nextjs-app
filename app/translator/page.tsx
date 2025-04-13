@@ -352,7 +352,7 @@ export default function TranslatorPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-5xl mx-auto">
       <HeaderSection
         inline
         className={'mb-5'}
@@ -509,8 +509,8 @@ export default function TranslatorPage() {
           <div>
             <div className="relative">
               <textarea
-                className="w-full h-64 p-3 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white resize-none thin-scrollbar"
-                placeholder="Enter text to translate..."
+                className="w-full h-84 p-3 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white resize-none thin-scrollbar"
+                //placeholder="Enter Content to Translate..."
                 value={sourceText}
                 onChange={(e) => setSourceText(e.target.value)}
               />
@@ -545,7 +545,7 @@ export default function TranslatorPage() {
             </div>
           </div>
           <div>
-            <div className="relative w-full h-64 p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white resize-none thin-scrollbar overflow-auto">
+            <div className="relative w-full h-84 p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white resize-none thin-scrollbar overflow-auto">
               {isTranslating ? (
                 <div className="flex items-center justify-center h-full text-gray-500">
                   <svg
@@ -568,7 +568,6 @@ export default function TranslatorPage() {
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                     ></path>
                   </svg>
-                  Translating...
                 </div>
               ) : (
                 <>

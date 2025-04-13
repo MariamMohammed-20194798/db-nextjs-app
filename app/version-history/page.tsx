@@ -8,7 +8,7 @@ import HeaderSection from '../components/HeaderSection';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 
 // Maximum number of versions to keep
-const MAX_VERSIONS = 9;
+const MAX_VERSIONS = 12;
 
 interface VersionDocument {
   id: string;
@@ -226,7 +226,7 @@ export default function VersionHistoryPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-5xl mx-auto">
       <HeaderSection
         inline
         className={'mb-5'}
@@ -251,7 +251,7 @@ export default function VersionHistoryPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
         {documents.map((doc) => (
           <motion.div
             key={doc.id}
