@@ -13,7 +13,6 @@ const AddSourceFile: React.FC<AddSourceFileProps> = ({
   maxSizeMB = 20,
   allowedFileTypes = ['txt', 'pdf', 'docx', 'doc', 'csv', 'xlsx'],
 }) => {
-  const [description, setDescription] = useState('');
   const [isDragging, setIsDragging] = useState(false);
   const [fileContent, setFileContent] = useState('');
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
@@ -68,76 +67,80 @@ const AddSourceFile: React.FC<AddSourceFileProps> = ({
 
       // For text files, read content directly
       if (file.type === 'text/plain' || fileExtension === 'txt') {
-        console.log('Processing text file');
         const text = await file.text();
         setFileContent(text);
       }
-      // For CSV files, read as text
-      else if (fileExtension === 'csv') {
-        console.log('Processing CSV file');
-        const text = await file.text();
-        setFileContent(text);
-      }
-      // For PDF, DOCX, and other files, we need to send the file to be processed server-side
-      else {
+      // For CSV and XLSX files, send to API
+      else if (['csv', 'xlsx'].includes(fileExtension)) {
         console.log(`Processing ${fileExtension} file`);
         const formData = new FormData();
         formData.append('file', file);
 
-        try {
-          const response = await fetch('/api/extract-content', {
-            method: 'POST',
-            body: formData,
-          });
+        const response = await fetch('/api/extract-content', {
+          method: 'POST',
+          body: formData,
+        });
 
-          let errorData;
-          let responseData;
+        const responseData = await handleApiResponse(response);
+        setFileContent(responseData.content);
+      }
+      // For PDF, DOCX, DOC and other files, send to API
+      else if (['pdf', 'docx', 'doc'].includes(fileExtension)) {
+        console.log(`Processing ${fileExtension} file`);
+        const formData = new FormData();
+        formData.append('file', file);
 
-          // Safe response parsing
-          try {
-            responseData = await response.json();
-          } catch (parseError) {
-            console.error('Failed to parse response:', parseError);
-            throw new Error(
-              `Server error: Could not parse response from server. Status: ${response.status} ${response.statusText}`
-            );
-          }
-
-          if (!response.ok) {
-            throw new Error(
-              responseData.error || `Failed to extract content: ${response.statusText}`
-            );
-          }
-
-          if (responseData.content) {
-            // Check if we have a "no content" message
-            if (
-              responseData.content ===
-                'No text content could be extracted from this PDF.' ||
-              responseData.content.includes('No text content could be extracted')
-            ) {
-              throw new Error(
-                'This PDF does not contain extractable text. It may contain only images or scanned content.'
-              );
-            }
-            setFileContent(responseData.content);
-          } else {
-            throw new Error('No content extracted from file');
-          }
-        } catch (extractError) {
-          console.error('Error extracting file content:', extractError);
-          setFileError(
-            extractError instanceof Error
-              ? extractError.message
-              : 'Failed to extract file content'
-          );
-          setFileContent(`Unable to extract content from: ${file.name}`);
-        }
+        const response = await fetch('/api/extract-content', {
+          method: 'POST',
+          body: formData,
+        });
+        console.log('Response:', response);
+        const responseData = await handleApiResponse(response);
+        setFileContent(responseData.content);
+      }
+      // Unsupported file type
+      else {
+        throw new Error(`Unsupported file type: ${fileExtension}`);
       }
     } catch (error) {
       console.error('Error processing file:', error);
       setFileError(error instanceof Error ? error.message : 'Failed to process file');
       setFileContent('');
+    }
+  };
+
+  // Helper function to handle API responses
+  const handleApiResponse = async (response: Response) => {
+    let responseData;
+
+    try {
+      responseData = await response.json();
+    } catch (parseError) {
+      console.error('Failed to parse response:', parseError);
+      throw new Error(
+        `Server error: Could not parse response from server. Status: ${response.status} ${response.statusText}`
+      );
+    }
+
+    if (!response.ok) {
+      throw new Error(
+        responseData.error || `Failed to extract content: ${response.statusText}`
+      );
+    }
+
+    if (responseData.content) {
+      // Check if we have a "no content" message
+      if (
+        responseData.content === 'No text content could be extracted from this PDF.' ||
+        responseData.content.includes('No text content could be extracted')
+      ) {
+        throw new Error(
+          'This PDF does not contain extractable text. It may contain only images or scanned content.'
+        );
+      }
+      return responseData;
+    } else {
+      throw new Error('No content extracted from file');
     }
   };
 
@@ -186,7 +189,7 @@ const AddSourceFile: React.FC<AddSourceFileProps> = ({
       <div
         ref={dropRef}
         className={`border-2 border-dashed rounded-md p-8 transition-colors flex flex-col items-center justify-center cursor-pointer ${
-          isDragging ? 'border-blue-500 bg-blue-900/10' : 'dark:border-pink-800'
+          isDragging ? 'border-blue-500 bg-blue-900/10' : 'dark:border-blue-500'
         }`}
         onDragEnter={handleDragEnter}
         onDragOver={handleDragOver}
@@ -195,7 +198,7 @@ const AddSourceFile: React.FC<AddSourceFileProps> = ({
         onClick={handleButtonClick}
       >
         <BsCloudUpload
-          className="h-12 w-12 text-white mb-2"
+          className="h-12 w-12 text-blue-500 mb-2"
           style={{ fontSize: '3rem' }}
         />
         <p className="text-white font-medium">Drag and Drop Here</p>

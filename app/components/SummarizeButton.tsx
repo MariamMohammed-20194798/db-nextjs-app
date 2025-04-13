@@ -147,7 +147,7 @@ const SummarizeButton: React.FC<SummarizeButtonProps> = ({
             ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
             : loading
             ? 'bg-gray-500'
-            : 'dark:bg-pink-900 hover:bg-pink-700 text-white'
+            : 'dark:bg-blue-500 hover:bg-blue-600 text-white'
         }`}
       >
         {loading ? 'Summarizing...' : 'Summarize Content'}
@@ -179,16 +179,16 @@ const SummarizeButton: React.FC<SummarizeButtonProps> = ({
             <button
               onClick={handleSaveToHistory}
               disabled={savingToHistory}
-              className={`px-4 py-1.5 rounded text-sm ${
+              className={`px-4 py-1.5 rounded text-sm dark:bg-transparent border ${
                 saveSuccess
-                  ? 'bg-green-800 text-white cursor-default'
+                  ? 'text-blue-500 border-blue-500 cursor-default'
                   : savingToHistory
-                  ? 'bg-gray-400 text-white cursor-wait'
-                  : 'bg-pink-800 hover:bg-pink-700 text-white'
+                  ? 'text-blue-500 cursor-wait'
+                  : 'text-blue-500 border-blue-500 hover:scale-105'
               }`}
             >
               {saveSuccess
-                ? 'Saved to History.'
+                ? 'Saved to History! 🎉'
                 : savingToHistory
                 ? 'Saving...'
                 : 'Save to History'}

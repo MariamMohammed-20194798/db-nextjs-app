@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
   try {
-    const { content, type, targetLanguage } = await req.json();
+    const { content, type, sourceLanguage, targetLanguage } = await req.json();
 
     if (!content) {
       return NextResponse.json(
@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
         messages: [
           {
             role: 'system',
-            content: `You are a translator that translates content to ${targetLanguage}. Translate the following ${type} content accurately while preserving the original meaning and formatting.`,
+            content: `You are a translator that translates content from ${sourceLanguage} to ${targetLanguage}. Translate the following ${type} content accurately while preserving the original meaning and formatting.`,
           },
           {
             role: 'user',

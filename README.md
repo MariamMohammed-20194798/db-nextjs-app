@@ -1,24 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# NextJS Translation and Text-to-Speech App
+
+This application provides translation services with text-to-speech capabilities using OpenAI API for translation and ElevenLabs API for text-to-speech synthesis.
+
+## Features
+
+- Translate text between multiple languages
+- Text-to-speech for both source and translated text
+- Save translations to history
+- Modern UI with dark mode support
+
+## Environment Variables
+
+Create a `.env.local` file in the root directory with the following variables:
+
+```
+OPENAI_API_KEY=your_openai_api_key
+ELEVENLABS_API_KEY=your_elevenlabs_api_key
+```
+
+## ElevenLabs Voice Configuration
+
+The application uses ElevenLabs for text-to-speech. Different voices can be assigned to different languages:
+
+1. Create an account at [ElevenLabs](https://elevenlabs.io/)
+2. Browse the available voices in the ElevenLabs dashboard
+3. Copy the voice IDs of voices you want to use for different languages
+4. Update the `languageVoiceMap` object in `app/translator/page.tsx` with your preferred voice IDs
+
+Default voice IDs are provided as examples, but you may want to customize them based on your preferences or to use voices in specific languages.
 
 ## Getting Started
 
-First, run the development server:
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+3. Create and set up environment variables as described above
+4. Run the development server:
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
+5. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## API Endpoints
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- `/api/translate` - Translates text between languages using OpenAI
+- `/api/tts` - Converts text to speech using ElevenLabs API
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Technologies Used
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Next.js
+- React
+- OpenAI API
+- ElevenLabs API
+- NextUI components
+- TailwindCSS
 
 ## Learn More
 

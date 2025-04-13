@@ -56,10 +56,10 @@ export default function Home() {
       >
         {sources.map((source, index) => (
           <button
-            className={`flex gap-2 justify-center items-center px-2 py-1 rounded-md transition-colors ${
+            className={`flex gap-2 justify-center items-center px-2 py-1 rounded-md dark:bg-transparent transition-colors border ${
               selectedSourceIndex === index
-                ? 'dark:bg-pink-900 text-white'
-                : 'dark:bg-gray-700 hover:scale-105'
+                ? 'text-blue-500 border-blue-500'
+                : 'dark:bg-gray-700 border-gray-600 hover:text-gray-400'
             }`}
             key={`kb_add_source_index_${index}`}
             onClick={() => setSourceIndex(index)}

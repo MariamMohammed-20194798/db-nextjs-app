@@ -167,7 +167,7 @@ export default function VersionHistoryPage() {
 
         // Show success message
         setSuccessMessage({
-          text: `Document "${trashedDocument.id}" moved to trash.`,
+          text: `Document ${trashedDocument.id} moved to trash.`,
           type: 'success',
         });
 
@@ -255,7 +255,7 @@ export default function VersionHistoryPage() {
         {documents.map((doc) => (
           <motion.div
             key={doc.id}
-            className="bg-gray-700 rounded-lg border border-gray-200 shadow-sm overflow-hidden"
+            className="bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-500 rounded-md overflow-hidden hover:outline-none hover:ring-2 hover:ring-blue-500"
             whileHover={{ y: -5, transition: { duration: 0.2 } }}
           >
             <div className="p-4">
@@ -272,14 +272,14 @@ export default function VersionHistoryPage() {
               <div className="flex space-x-2">
                 <button
                   onClick={() => handleDownload(doc)}
-                  className="p-2 text-gray-400 hover:text-red-500"
+                  className="p-2 text-gray-400 hover:text-blue-500"
                   title="Download"
                 >
                   <FiDownload />
                 </button>
                 <button
                   onClick={() => handleDelete(doc.id)}
-                  className="p-2 text-gray-400 hover:text-red-500"
+                  className="p-2 text-gray-400 hover:text-blue-500"
                   title="Move to Trash"
                 >
                   <FiTrash2 />

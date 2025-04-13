@@ -253,7 +253,7 @@ export default function TrashPage() {
         {trashedDocuments.map((doc) => (
           <motion.div
             key={doc.id}
-            className="bg-gray-700 rounded-lg border border-gray-200 shadow-sm overflow-hidden"
+            className="bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-500 rounded-md overflow-hidden hover:outline-none hover:ring-2 hover:ring-blue-500 overflow-hidden"
             whileHover={{ y: -5, transition: { duration: 0.2 } }}
           >
             <div className="p-4">
@@ -277,14 +277,14 @@ export default function TrashPage() {
               <div className="flex space-x-2">
                 <button
                   onClick={() => handleRestoreFromTrash(doc.id)}
-                  className="p-2 text-gray-500 hover:text-red-700"
+                  className="p-2 text-gray-500 hover:text-blue-500"
                   title="Restore from trash"
                 >
                   <MdRestore className="w-5 h-5" />
                 </button>
                 <button
                   onClick={() => handlePermanentDelete(doc.id)}
-                  className="p-2 text-gray-500 hover:text-red-700"
+                  className="p-2 text-gray-500 hover:text-blue-500"
                   title="Delete permanently"
                 >
                   <FiTrash2 className="w-4 h-4" />
