@@ -295,7 +295,7 @@ export default function TranslatorPage() {
         (translatedText.split('\n')[0].substring(0, 40) ||
           translatedText.split(' ').slice(0, 5).join(' ') + '...');
 
-      const response = await fetch('/api/documents/history', {
+      const response = await fetch('/api/history', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

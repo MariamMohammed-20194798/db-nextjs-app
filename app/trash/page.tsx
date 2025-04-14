@@ -30,7 +30,7 @@ export default function TrashPage() {
       setIsLoading(true);
 
       // Get trashed documents from API
-      const response = await fetch('/api/documents/trash');
+      const response = await fetch('/api/trash');
       let apiTrashedDocuments: TrashedDocument[] = [];
 
       if (response.ok) {
@@ -109,7 +109,7 @@ export default function TrashPage() {
       }
 
       // Restore via API
-      const restoreResponse = await fetch(`/api/documents/trash?id=${id}`, {
+      const restoreResponse = await fetch(`/api/trash?id=${id}`, {
         method: 'PUT',
       });
 
@@ -169,40 +169,37 @@ export default function TrashPage() {
       const documentToDelete = trashedDocuments.find((doc) => doc.id === id);
       const documentTitle = documentToDelete?.title || 'Document';
 
+      // Update localStorage first
+      try {
+        const storedTrashedDocs = localStorage.getItem('trashedDocuments');
+        if (storedTrashedDocs) {
+          const parsedTrashedDocs = JSON.parse(storedTrashedDocs);
+          const updatedTrashedDocs = parsedTrashedDocs.filter(
+            (doc: TrashedDocument) => doc.id !== id
+          );
+          localStorage.setItem('trashedDocuments', JSON.stringify(updatedTrashedDocs));
+        }
+      } catch (error) {
+        console.error('Error updating localStorage trash:', error);
+      }
+
       // Delete from API trash
-      const response = await fetch(`/api/documents/trash?id=${id}`, {
+      const response = await fetch(`/api/trash?id=${id}`, {
         method: 'DELETE',
       });
 
-      if (response.ok) {
-        // Update UI
-        setTrashedDocuments(trashedDocuments.filter((doc) => doc.id !== id));
+      // Update UI regardless of API response
+      setTrashedDocuments(trashedDocuments.filter((doc) => doc.id !== id));
 
-        // Update localStorage
-        try {
-          const storedTrashedDocs = localStorage.getItem('trashedDocuments');
-          if (storedTrashedDocs) {
-            const parsedTrashedDocs = JSON.parse(storedTrashedDocs);
-            const updatedTrashedDocs = parsedTrashedDocs.filter(
-              (doc: TrashedDocument) => doc.id !== id
-            );
-            localStorage.setItem('trashedDocuments', JSON.stringify(updatedTrashedDocs));
-          }
-        } catch (error) {
-          console.error('Error updating localStorage trash:', error);
-        }
+      // Show success message
+      setSuccessMessage({
+        text: `Document ID: ${documentToDelete?.id} permanently deleted.`,
+        type: 'success',
+      });
 
-        // Show success message
-        setSuccessMessage({
-          text: `Document ID: ${documentToDelete?.id} permanently deleted.`,
-          type: 'success',
-        });
-      } else {
-        console.error('Failed to permanently delete document:', await response.text());
-        setSuccessMessage({
-          text: 'Failed to delete document. Please try again.',
-          type: 'error',
-        });
+      if (!response.ok) {
+        // Log the error but don't show to user since we've already removed it from localStorage
+        console.error('API delete failed:', await response.text());
       }
     } catch (error) {
       console.error('Error permanently deleting document:', error);

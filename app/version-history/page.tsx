@@ -6,6 +6,8 @@ import { MdHistory } from 'react-icons/md';
 import { motion } from 'framer-motion';
 import HeaderSection from '../components/HeaderSection';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
+import VersionModal from '../components/VersionModal';
+import { useDisclosure } from '@heroui/react';
 
 // Maximum number of versions to keep
 const MAX_VERSIONS = 12;
@@ -28,13 +30,15 @@ export default function VersionHistoryPage() {
   const [documents, setDocuments] = useState<VersionDocument[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [successMessage, setSuccessMessage] = useState<SuccessMessage | null>(null);
+  const [selectedDocument, setSelectedDocument] = useState<VersionDocument | null>(null);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const fetchDocuments = async () => {
     try {
       setIsLoading(true);
 
       // Get active documents from API
-      const response = await fetch('/api/documents/history');
+      const response = await fetch('/api/history');
       let apiDocuments: VersionDocument[] = [];
 
       if (response.ok) {
@@ -129,7 +133,7 @@ export default function VersionHistoryPage() {
       };
 
       // Send to API trash
-      const trashResponse = await fetch('/api/documents/trash', {
+      const trashResponse = await fetch('/api/trash', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -217,6 +221,11 @@ export default function VersionHistoryPage() {
     setTimeout(() => setSuccessMessage(null), 3000);
   };
 
+  const handleDocumentClick = (document: VersionDocument) => {
+    setSelectedDocument(document);
+    onOpen();
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center mt-50">
@@ -255,8 +264,9 @@ export default function VersionHistoryPage() {
         {documents.map((doc) => (
           <motion.div
             key={doc.id}
-            className="bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-500 rounded-md overflow-hidden hover:outline-none hover:ring-2 hover:ring-blue-500"
+            className="bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-500 rounded-md overflow-hidden hover:outline-none hover:ring-2 hover:ring-blue-500 cursor-pointer"
             whileHover={{ y: -5, transition: { duration: 0.2 } }}
+            onClick={() => handleDocumentClick(doc)}
           >
             <div className="p-4">
               <div className="text-xs text-gray-400 mb-1">{doc.date}</div>
@@ -271,14 +281,20 @@ export default function VersionHistoryPage() {
 
               <div className="flex space-x-2">
                 <button
-                  onClick={() => handleDownload(doc)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDownload(doc);
+                  }}
                   className="p-2 text-gray-400 hover:text-blue-500"
                   title="Download"
                 >
                   <FiDownload />
                 </button>
                 <button
-                  onClick={() => handleDelete(doc.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(doc.id);
+                  }}
                   className="p-2 text-gray-400 hover:text-blue-500"
                   title="Move to Trash"
                 >
@@ -299,6 +315,14 @@ export default function VersionHistoryPage() {
           </p>
         </div>
       )}
+
+      <VersionModal
+        isOpen={isOpen}
+        onClose={onClose}
+        document={selectedDocument}
+        onDownload={handleDownload}
+        onDelete={handleDelete}
+      />
     </div>
   );
 }
