@@ -81,9 +81,10 @@ const SummarizeButton: React.FC<SummarizeButtonProps> = ({
 
     try {
       // Generate a title from the first line of the summary or first few words
-      const title =
-        summary.split('\n')[0].substring(0, 50) ||
-        summary.split(' ').slice(0, 5).join(' ') + '...';
+      const firstLine = summary.split('\n')[0];
+      const title = firstLine.includes(',')
+        ? firstLine.split(',')[0].trim()
+        : firstLine.split(' ').slice(0, 5).join(' ');
 
       const response = await fetch('/api/history', {
         method: 'POST',

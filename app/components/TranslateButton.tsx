@@ -85,10 +85,13 @@ const TranslateButton: React.FC<TranslateButtonProps> = ({
 
     try {
       // Generate a title from the first line of the translation or first few words
+      const firstLine = translatedText.split('\n')[0];
       const title =
-        `Translation to ${targetLanguage}: ` +
-        (translatedText.split('\n')[0].substring(0, 40) ||
-          translatedText.split(' ').slice(0, 5).join(' ') + '...');
+        `Translation to ${targetLanguage}` +
+        '/\n' +
+        (firstLine.includes(',')
+          ? firstLine.split(',')[0].trim()
+          : firstLine.split(' ').slice(0, 5).join(' ') + '...');
 
       const response = await fetch('/api/documents/history', {
         method: 'POST',
