@@ -40,6 +40,18 @@ export default function Home() {
           </Link>
 
           <Link
+            href="/generate"
+            className="block p-6 bg-white dark:bg-gray-800 rounded-lg hover:scale-105 transition-all duration-300"
+          >
+            <h2 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">
+              Content Generator
+            </h2>
+            <p className="text-gray-600 dark:text-gray-300">
+              Create professional emails, reports, blog posts, and more.
+            </p>
+          </Link>
+
+          <Link
             href="/version-history"
             className="block p-6 bg-white dark:bg-gray-800 rounded-lg hover:scale-105 transition-all duration-300"
           >

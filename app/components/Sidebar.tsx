@@ -8,10 +8,12 @@ import {
   IoTime,
   IoTrash,
   IoBulb,
+  IoCreate,
   IoChevronForwardOutline,
   IoChevronBackOutline,
 } from 'react-icons/io5';
 import { IoLanguage } from 'react-icons/io5';
+import { MdOutlineContentCopy } from 'react-icons/md';
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -80,6 +82,19 @@ export default function Sidebar() {
         >
           <IoDocumentText className={isOpen ? 'w-5 h-5' : 'w-6 h-6'} />
           {isOpen && 'Summarize'}
+        </Link>
+        <Link
+          href="/generate"
+          className={`px-3 py-2 text-white rounded flex items-center ${
+            isOpen ? 'gap-2' : 'justify-center'
+          } ${
+            pathname === '/generate'
+              ? 'bg-gray-200 dark:bg-gray-700'
+              : 'hover:bg-gray-200 dark:hover:bg-gray-700'
+          }`}
+        >
+          <IoCreate className={isOpen ? 'w-5 h-5' : 'w-6 h-6'} />
+          {isOpen && 'Content Generator'}
         </Link>
         <Link
           href="/version-history"
