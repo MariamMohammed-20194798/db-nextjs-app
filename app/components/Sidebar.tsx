@@ -31,12 +31,12 @@ export default function Sidebar() {
     >
       <div className="mb-8 flex items-center justify-between">
         {isOpen ? (
-          <p className="text-2xl mt-2 ml-2 font-bold dark:text-blue-500 flex items-center gap-2">
+          <p className="text-2xl mt-2 ml-2 font-bold text-blue-400 animate-pulse flex items-center gap-2">
             <IoBulb className="w-6 h-6" />
             DocuBrain
           </p>
         ) : (
-          <p className="text-2xl mt-2 ml-2 font-bold dark:text-blue-500 flex items-center justify-center">
+          <p className="text-2xl mt-2 ml-2 font-bold text-blue-400 animate-pulse flex items-center justify-center">
             <IoBulb className="w-8 h-8" />
           </p>
         )}
