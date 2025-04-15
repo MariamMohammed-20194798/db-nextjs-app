@@ -11,7 +11,7 @@ interface AddSourceFileProps {
 const AddSourceFile: React.FC<AddSourceFileProps> = ({
   onFilesAdded,
   maxSizeMB = 20,
-  allowedFileTypes = ['txt', 'pdf', 'docx', 'doc', 'csv', 'xlsx'],
+  allowedFileTypes = ['txt'],
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [fileContent, setFileContent] = useState('');
@@ -65,41 +65,11 @@ const AddSourceFile: React.FC<AddSourceFileProps> = ({
       setUploadedFile(file);
       const fileExtension = file.name.split('.').pop()?.toLowerCase() || '';
 
-      // For text files, read content directly
+      // Only process txt files
       if (file.type === 'text/plain' || fileExtension === 'txt') {
         const text = await file.text();
         setFileContent(text);
-      }
-      // For CSV and XLSX files, send to API
-      else if (['csv', 'xlsx'].includes(fileExtension)) {
-        console.log(`Processing ${fileExtension} file`);
-        const formData = new FormData();
-        formData.append('file', file);
-
-        const response = await fetch('/api/extract-content', {
-          method: 'POST',
-          body: formData,
-        });
-
-        const responseData = await handleApiResponse(response);
-        setFileContent(responseData.content);
-      }
-      // For PDF, DOCX, DOC and other files, send to API
-      else if (['pdf', 'docx', 'doc'].includes(fileExtension)) {
-        console.log(`Processing ${fileExtension} file`);
-        const formData = new FormData();
-        formData.append('file', file);
-
-        const response = await fetch('/api/extract-content', {
-          method: 'POST',
-          body: formData,
-        });
-        console.log('Response:', response);
-        const responseData = await handleApiResponse(response);
-        setFileContent(responseData.content);
-      }
-      // Unsupported file type
-      else {
+      } else {
         throw new Error(`Unsupported file type: ${fileExtension}`);
       }
     } catch (error) {
@@ -203,9 +173,7 @@ const AddSourceFile: React.FC<AddSourceFileProps> = ({
         />
         <p className="text-white font-medium">Drag and Drop Here</p>
         <p className="text-gray-400 text-sm">Max Size: {maxSizeMB}MB</p>
-        <p className="text-gray-400 text-sm mt-1">
-          Only {allowedFileTypes.join(', ')} Files
-        </p>
+        <p className="text-gray-400 text-sm mt-1">Only .txt files allowed</p>
       </div>
       <input
         ref={fileInputRef}

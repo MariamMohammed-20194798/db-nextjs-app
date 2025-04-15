@@ -148,7 +148,7 @@ const SummarizeButton: React.FC<SummarizeButtonProps> = ({
             ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
             : loading
             ? 'bg-gray-500'
-            : 'dark:bg-blue-500 hover:bg-blue-600 text-white'
+            : 'dark:bg-blue-600 hover:bg-blue-500 text-white'
         }`}
       >
         {loading ? 'Summarizing...' : 'Summarize Content'}

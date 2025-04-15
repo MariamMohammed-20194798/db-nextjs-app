@@ -11,7 +11,6 @@ if (!apiKey || apiKey === '') {
 const openai = new OpenAI({
   apiKey: apiKey as string,
 });
-console.log('OpenAI API key:', apiKey);
 
 // Function to fetch content from a URL
 async function fetchUrlContent(url: string): Promise<string> {
