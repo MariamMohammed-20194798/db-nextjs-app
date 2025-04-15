@@ -1,13 +1,11 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { IoDocumentText } from 'react-icons/io5';
-import { FiDownload, FiTrash2 } from 'react-icons/fi';
+import { FiDownload, FiTrash2, FiX } from 'react-icons/fi';
 import { MdHistory } from 'react-icons/md';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import HeaderSection from '../components/HeaderSection';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
-import VersionModal from '../components/VersionModal';
-import { useDisclosure } from '@heroui/react';
 
 // Maximum number of versions to keep
 const MAX_VERSIONS = 12;
@@ -31,7 +29,7 @@ export default function VersionHistoryPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [successMessage, setSuccessMessage] = useState<SuccessMessage | null>(null);
   const [selectedDocument, setSelectedDocument] = useState<VersionDocument | null>(null);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const fetchDocuments = async () => {
     try {
@@ -223,7 +221,12 @@ export default function VersionHistoryPage() {
 
   const handleDocumentClick = (document: VersionDocument) => {
     setSelectedDocument(document);
-    onOpen();
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedDocument(null);
   };
 
   if (isLoading) {
@@ -316,13 +319,60 @@ export default function VersionHistoryPage() {
         </div>
       )}
 
-      <VersionModal
-        isOpen={isOpen}
-        onClose={onClose}
-        document={selectedDocument}
-        onDownload={handleDownload}
-        onDelete={handleDelete}
-      />
+      {/* Document Modal */}
+      <AnimatePresence>
+        {isModalOpen && selectedDocument && (
+          <div className="fixed inset-0 backdrop-blur-md bg-black/30 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="bg-gray-800 rounded-lg max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden"
+            >
+              <div className="flex items-center justify-between p-4 border-b border-gray-700">
+                <h2 className="text-xl font-semibold">{selectedDocument.title}</h2>
+                <button
+                  onClick={closeModal}
+                  className="p-1 hover:bg-gray-700 rounded-full"
+                >
+                  <FiX className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="p-4 overflow-y-auto flex-grow">
+                <div className="mb-4 flex justify-between text-sm text-gray-400">
+                  <span>{selectedDocument.date}</span>
+                  <span>{selectedDocument.wordCount} words</span>
+                </div>
+                <div className="whitespace-pre-wrap">{selectedDocument.content}</div>
+              </div>
+
+              <div className="p-4 border-t border-gray-700 flex justify-end space-x-3">
+                <button
+                  onClick={() => {
+                    handleDownload(selectedDocument);
+                    closeModal();
+                  }}
+                  className="flex items-center px-4 py-2  bg-blue-600 hover:bg-blue-700 rounded-md"
+                >
+                  <FiDownload className="w-4 h-4 mr-2" />
+                  Download
+                </button>
+                <button
+                  onClick={() => {
+                    handleDelete(selectedDocument.id);
+                    closeModal();
+                  }}
+                  className="flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 rounded-md"
+                >
+                  <FiTrash2 className="w-4 h-4 mr-2" />
+                  Delete
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

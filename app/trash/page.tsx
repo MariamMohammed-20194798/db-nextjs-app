@@ -1,9 +1,9 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { FiTrash2 } from 'react-icons/fi';
+import { FiTrash2, FiX } from 'react-icons/fi';
 import { MdRestore } from 'react-icons/md';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import HeaderSection from '../components/HeaderSection';
 
 interface TrashedDocument {
@@ -24,6 +24,8 @@ export default function TrashPage() {
   const [trashedDocuments, setTrashedDocuments] = useState<TrashedDocument[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [successMessage, setSuccessMessage] = useState<SuccessMessage | null>(null);
+  const [selectedDocument, setSelectedDocument] = useState<TrashedDocument | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const fetchTrashedDocuments = async () => {
     try {
@@ -210,6 +212,16 @@ export default function TrashPage() {
     }
   };
 
+  const openDocumentModal = (document: TrashedDocument) => {
+    setSelectedDocument(document);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedDocument(null);
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center mt-50">
@@ -250,8 +262,9 @@ export default function TrashPage() {
         {trashedDocuments.map((doc) => (
           <motion.div
             key={doc.id}
-            className="bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-500 rounded-md overflow-hidden hover:outline-none hover:ring-2 hover:ring-blue-500 overflow-hidden"
+            className="bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-500 rounded-md overflow-hidden hover:outline-none hover:ring-2 hover:ring-blue-500 overflow-hidden cursor-pointer"
             whileHover={{ y: -5, transition: { duration: 0.2 } }}
+            onClick={() => openDocumentModal(doc)}
           >
             <div className="p-4">
               <div className="flex justify-between items-center mb-1">
@@ -273,14 +286,20 @@ export default function TrashPage() {
 
               <div className="flex space-x-2">
                 <button
-                  onClick={() => handleRestoreFromTrash(doc.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleRestoreFromTrash(doc.id);
+                  }}
                   className="p-2 text-gray-500 hover:text-blue-500"
                   title="Restore from trash"
                 >
                   <MdRestore className="w-5 h-5" />
                 </button>
                 <button
-                  onClick={() => handlePermanentDelete(doc.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handlePermanentDelete(doc.id);
+                  }}
                   className="p-2 text-gray-500 hover:text-blue-500"
                   title="Delete permanently"
                 >
@@ -299,6 +318,61 @@ export default function TrashPage() {
           <p className="mt-1 text-sm text-gray-500">No documents in trash.</p>
         </div>
       )}
+
+      {/* Document Modal */}
+      <AnimatePresence>
+        {isModalOpen && selectedDocument && (
+          <div className="fixed inset-0 backdrop-blur-md bg-black/30 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="bg-gray-800 rounded-lg max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden"
+            >
+              <div className="flex items-center justify-between p-4 border-b border-gray-700">
+                <h2 className="text-xl font-semibold">{selectedDocument.title}</h2>
+                <button
+                  onClick={closeModal}
+                  className="p-1 hover:bg-gray-700 rounded-full"
+                >
+                  <FiX className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="p-4 overflow-y-auto flex-grow">
+                <div className="mb-4 flex justify-between text-sm text-gray-400">
+                  <span>{selectedDocument.date}</span>
+                  <span>{selectedDocument.wordCount} words</span>
+                </div>
+                <div className="whitespace-pre-wrap">{selectedDocument.content}</div>
+              </div>
+
+              <div className="p-4 border-t border-gray-700 flex justify-end space-x-3">
+                <button
+                  onClick={() => {
+                    handleRestoreFromTrash(selectedDocument.id);
+                    closeModal();
+                  }}
+                  className="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md"
+                >
+                  <MdRestore className="w-4 h-4 mr-2" />
+                  Restore
+                </button>
+                <button
+                  onClick={() => {
+                    handlePermanentDelete(selectedDocument.id);
+                    closeModal();
+                  }}
+                  className="flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 rounded-md"
+                >
+                  <FiTrash2 className="w-4 h-4 mr-2" />
+                  Delete Permanently
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

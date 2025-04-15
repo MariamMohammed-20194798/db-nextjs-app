@@ -65,7 +65,6 @@ const AddSourceFile: React.FC<AddSourceFileProps> = ({
       setUploadedFile(file);
       const fileExtension = file.name.split('.').pop()?.toLowerCase() || '';
 
-      // Only process txt files
       if (file.type === 'text/plain' || fileExtension === 'txt') {
         const text = await file.text();
         setFileContent(text);
@@ -76,41 +75,6 @@ const AddSourceFile: React.FC<AddSourceFileProps> = ({
       console.error('Error processing file:', error);
       setFileError(error instanceof Error ? error.message : 'Failed to process file');
       setFileContent('');
-    }
-  };
-
-  // Helper function to handle API responses
-  const handleApiResponse = async (response: Response) => {
-    let responseData;
-
-    try {
-      responseData = await response.json();
-    } catch (parseError) {
-      console.error('Failed to parse response:', parseError);
-      throw new Error(
-        `Server error: Could not parse response from server. Status: ${response.status} ${response.statusText}`
-      );
-    }
-
-    if (!response.ok) {
-      throw new Error(
-        responseData.error || `Failed to extract content: ${response.statusText}`
-      );
-    }
-
-    if (responseData.content) {
-      // Check if we have a "no content" message
-      if (
-        responseData.content === 'No text content could be extracted from this PDF.' ||
-        responseData.content.includes('No text content could be extracted')
-      ) {
-        throw new Error(
-          'This PDF does not contain extractable text. It may contain only images or scanned content.'
-        );
-      }
-      return responseData;
-    } else {
-      throw new Error('No content extracted from file');
     }
   };
 
@@ -173,7 +137,7 @@ const AddSourceFile: React.FC<AddSourceFileProps> = ({
         />
         <p className="text-white font-medium">Drag and Drop Here</p>
         <p className="text-gray-400 text-sm">Max Size: {maxSizeMB}MB</p>
-        <p className="text-gray-400 text-sm mt-1">Only .txt files allowed</p>
+        <p className="text-gray-400 text-sm mt-1">Only .txt file allowed</p>
       </div>
       <input
         ref={fileInputRef}
