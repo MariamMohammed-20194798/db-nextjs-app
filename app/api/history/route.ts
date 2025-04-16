@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { supabase } from '@/app/utils/supabase';
 
 // Define a type for our document
 interface HistoryDocument {
@@ -24,47 +25,40 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const { title, content } = body;
+    const { title, content } = await req.json();
 
-    if (!title || !content) {
+    if (!content) {
+      return NextResponse.json({ error: 'Content is required' }, { status: 400 });
+    }
+
+    // Calculate word count
+    const wordCount = content.trim().split(/\s+/).length;
+
+    // Insert into Supabase
+    const { data, error } = await supabase
+      .from('documents')
+      .insert({
+        title: title || 'Untitled Document',
+        content,
+        type: 'history',
+        created_at: new Date().toISOString(),
+        word_count: wordCount,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Failed to save to history:', error);
       return NextResponse.json(
-        { error: 'Title and content are required' },
-        { status: 400 }
+        { error: 'Failed to save document to history' },
+        { status: 500 }
       );
     }
 
-    const newDocument: HistoryDocument = {
-      id: String(Date.now()), // Generate a unique ID
-      title,
-      content,
-      date: new Date().toLocaleDateString('en-US', {
-        day: '2-digit',
-        month: 'short',
-      }),
-      wordCount: content.split(/\s+/).length,
-    };
-
-    // Add the new document to the array
-    sampleDocuments.push(newDocument);
-
-    // Keep only the 9 most recent documents
-    if (sampleDocuments.length > MAX_VERSIONS) {
-      // Sort by ID (timestamp) descending, then remove the oldest ones
-      sampleDocuments.sort((a, b) => parseInt(b.id) - parseInt(a.id));
-      // Keep only the MAX_VERSIONS most recent documents
-      sampleDocuments.splice(MAX_VERSIONS);
-    }
-
-    // In a real app, you would save this to a database
-    // The client will handle saving to localStorage
-    return NextResponse.json({
-      success: true,
-      document: newDocument,
-    });
+    return NextResponse.json({ document: data });
   } catch (error) {
-    console.error('Error creating document:', error);
-    return NextResponse.json({ error: 'Failed to create document' }, { status: 500 });
+    console.error('Error in history API:', error);
+    return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 });
   }
 }
 
@@ -78,8 +72,14 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: 'Document ID is required' }, { status: 400 });
     }
 
-    // In a real app, you would delete from a database
-    // The client will handle removing from localStorage
+    // Delete from Supabase
+    const { error } = await supabase.from('documents').delete().eq('id', id);
+
+    if (error) {
+      console.error('Error deleting document:', error);
+      return NextResponse.json({ error: 'Failed to delete document' }, { status: 500 });
+    }
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting document:', error);

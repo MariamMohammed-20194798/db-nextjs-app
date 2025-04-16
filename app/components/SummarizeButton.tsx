@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 // Maximum number of versions to keep
 const MAX_VERSIONS = 9;
@@ -14,12 +15,14 @@ const SummarizeButton: React.FC<SummarizeButtonProps> = ({
   type,
   isDisabled = false,
 }) => {
+  const router = useRouter();
   const [summary, setSummary] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [showSummary, setShowSummary] = useState<boolean>(false);
   const [savingToHistory, setSavingToHistory] = useState<boolean>(false);
   const [saveSuccess, setSaveSuccess] = useState<boolean>(false);
+  const [savedDocumentId, setSavedDocumentId] = useState<string | null>(null);
 
   const handleSummarize = async () => {
     if (!content || isDisabled) return;
@@ -28,6 +31,7 @@ const SummarizeButton: React.FC<SummarizeButtonProps> = ({
     setError(null);
     setSummary('');
     setSaveSuccess(false);
+    setSavedDocumentId(null);
 
     try {
       console.log(
@@ -103,28 +107,9 @@ const SummarizeButton: React.FC<SummarizeButtonProps> = ({
         throw new Error(data.error || 'Failed to save to history');
       }
 
-      // Store the newly created document in local storage for persistence
+      // Set the saved document ID for the chat button
       if (data.document) {
-        // Get existing documents or initialize empty array
-        const existingDocuments = JSON.parse(localStorage.getItem('documents') || '[]');
-
-        // Add new document to the beginning of the array
-        existingDocuments.unshift(data.document);
-
-        // Limit to MAX_VERSIONS
-        if (existingDocuments.length > MAX_VERSIONS) {
-          existingDocuments.splice(MAX_VERSIONS);
-        }
-
-        // Save back to localStorage
-        localStorage.setItem('documents', JSON.stringify(existingDocuments));
-
-        // Trigger events to notify other components
-        localStorage.setItem('documentSaved', Date.now().toString());
-
-        // Dispatch custom event for same-tab updates
-        const event = new Event('documentSaved');
-        window.dispatchEvent(event);
+        setSavedDocumentId(data.document.id);
       }
 
       setSaveSuccess(true);
@@ -135,6 +120,41 @@ const SummarizeButton: React.FC<SummarizeButtonProps> = ({
       );
     } finally {
       setSavingToHistory(false);
+    }
+  };
+
+  const handleChatWithSummary = async () => {
+    // If we don't have a saved document ID yet, save it to Supabase first
+    if (!savedDocumentId) {
+      try {
+        // Save as temporary document
+        const response = await fetch('/api/temp-document', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            title: 'Temporary Summary',
+            content: summary,
+            type: 'summary',
+          }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to save temporary document');
+        }
+
+        // Navigate to chatbot with temporary document ID
+        router.push(`/chatbot?documentId=${data.document.id}`);
+      } catch (error) {
+        console.error('Error saving temporary document:', error);
+        setError('Failed to create chat session. Please try again.');
+      }
+    } else {
+      // Navigate to chatbot with saved document ID
+      router.push(`/chatbot?documentId=${savedDocumentId}`);
     }
   };
 
@@ -176,7 +196,14 @@ const SummarizeButton: React.FC<SummarizeButtonProps> = ({
             <h3 className="font-medium mb-2 text-black">Summary:</h3>
             <p className="text-sm text-black">{summary}</p>
           </div>
-          <div className="mt-4 flex justify-end">
+          <div className="mt-4 flex justify-between">
+            <button
+              onClick={handleChatWithSummary}
+              className="px-4 py-1.5 rounded text-sm dark:bg-transparent border border-blue-500 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:scale-105"
+            >
+              Chat with this Summary
+            </button>
+
             <button
               onClick={handleSaveToHistory}
               disabled={savingToHistory}

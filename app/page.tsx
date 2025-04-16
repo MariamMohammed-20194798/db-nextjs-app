@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { IoBulb } from 'react-icons/io5';
+import { IoMdChatbubbles } from 'react-icons/io';
 
 export default function Home() {
   return (
@@ -48,6 +49,22 @@ export default function Home() {
             </h2>
             <p className="text-gray-600 dark:text-gray-300">
               Create professional emails, reports, blog posts, and more.
+            </p>
+          </Link>
+
+          <Link
+            href="/chatbot"
+            className="block p-6 bg-white dark:bg-gray-800 rounded-lg hover:scale-105 transition-all duration-300 border-2 border-blue-400"
+          >
+            <h2 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white flex items-center gap-2">
+              <IoMdChatbubbles className="text-blue-400" />
+              AI Chatbot{' '}
+              <span className="text-xs bg-blue-400 text-white px-2 py-0.5 rounded-full">
+                New
+              </span>
+            </h2>
+            <p className="text-gray-600 dark:text-gray-300">
+              Chat with your documents and get instant answers to your questions.
             </p>
           </Link>
 
