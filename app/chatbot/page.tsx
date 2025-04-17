@@ -115,18 +115,12 @@ export default function ChatbotPage() {
                           : 'bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600'
                       }`}
                     >
-                      <div className="font-medium text-gray-900 dark:text-white">
+                      <div className="font-medium mb-1 text-gray-900 dark:text-white">
                         {doc.title}
                       </div>
-                      <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
-                        <span>{doc.type}</span>
+                      <div className="flex text-xs text-gray-500 dark:text-gray-400">
                         {doc.created_at && <span>{formatDate(doc.created_at)}</span>}
                       </div>
-                      {doc.word_count && (
-                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                          {doc.word_count.toLocaleString()} words
-                        </div>
-                      )}
                     </div>
                   ))}
                 </div>

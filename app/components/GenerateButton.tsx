@@ -86,8 +86,8 @@ const GenerateButton: React.FC<GenerateButtonProps> = ({
     setSaveSuccess(false);
 
     try {
-      // Generate a title from content type and topic
-      const title = `${
+      // Generate a title from content type and topic with prefix for better detection
+      const title = `Generate: ${
         contentType.charAt(0).toUpperCase() + contentType.slice(1)
       } about ${topic}`;
 
@@ -113,8 +113,17 @@ const GenerateButton: React.FC<GenerateButtonProps> = ({
         // Get existing documents or initialize empty array
         const existingDocuments = JSON.parse(localStorage.getItem('documents') || '[]');
 
+        // Format the document to match the VersionDocument structure
+        const formattedDocument = {
+          id: data.document.id,
+          title: data.document.title,
+          content: data.document.content,
+          date: formatDate(data.document.created_at),
+          wordCount: data.document.word_count,
+        };
+
         // Add new document to the beginning of the array
-        existingDocuments.unshift(data.document);
+        existingDocuments.unshift(formattedDocument);
 
         // Limit to MAX_VERSIONS
         if (existingDocuments.length > MAX_VERSIONS) {
@@ -162,6 +171,14 @@ const GenerateButton: React.FC<GenerateButtonProps> = ({
         console.error('Failed to copy content: ', err);
       });
   };
+
+  // Function to format date as "Apr 15" style
+  function formatDate(dateString: string) {
+    const date = new Date(dateString);
+    const month = date.toLocaleString('en-US', { month: 'short' });
+    const day = date.getDate();
+    return `${month} ${day}`;
+  }
 
   return (
     <div className="w-full">

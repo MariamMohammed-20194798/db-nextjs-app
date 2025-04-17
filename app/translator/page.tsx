@@ -291,7 +291,7 @@ export default function TranslatorPage() {
     try {
       // Generate a title from the first line of the translation or first few words
       const title =
-        `Translation to ${targetLanguage}: ` +
+        `Translation to ${targetLanguageLabel}: ` +
         (translatedText.split('\n')[0].substring(0, 40) ||
           translatedText.split(' ').slice(0, 5).join(' ') + '...');
 
@@ -317,8 +317,17 @@ export default function TranslatorPage() {
         // Get existing documents or initialize empty array
         const existingDocuments = JSON.parse(localStorage.getItem('documents') || '[]');
 
+        // Format the document to match the VersionDocument structure
+        const formattedDocument = {
+          id: data.document.id,
+          title: data.document.title,
+          content: data.document.content,
+          date: formatDate(data.document.created_at),
+          wordCount: data.document.word_count,
+        };
+
         // Add new document to the beginning of the array
-        existingDocuments.unshift(data.document);
+        existingDocuments.unshift(formattedDocument);
 
         // Limit to MAX_VERSIONS
         if (existingDocuments.length > MAX_VERSIONS) {
@@ -350,6 +359,14 @@ export default function TranslatorPage() {
       setSavingToHistory(false);
     }
   };
+
+  // Function to format date as "Apr 15" style
+  function formatDate(dateString: string) {
+    const date = new Date(dateString);
+    const month = date.toLocaleString('en-US', { month: 'short' });
+    const day = date.getDate();
+    return `${month} ${day}`;
+  }
 
   return (
     <div className="max-w-5xl mx-auto">

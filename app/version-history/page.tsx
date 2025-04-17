@@ -1,14 +1,18 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { IoDocumentText } from 'react-icons/io5';
-import { FiDownload, FiTrash2, FiX } from 'react-icons/fi';
-import { MdHistory } from 'react-icons/md';
+import { FiDownload, FiTrash2, FiX, FiFilter, FiLayers } from 'react-icons/fi';
+import { MdHistory, MdTranslate } from 'react-icons/md';
+import { BsFileEarmarkText } from 'react-icons/bs';
+import { AiOutlineLoading3Quarters, AiOutlineFileAdd } from 'react-icons/ai';
 import { motion, AnimatePresence } from 'framer-motion';
 import HeaderSection from '../components/HeaderSection';
-import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 
 // Maximum number of versions to keep
 const MAX_VERSIONS = 12;
+
+// Document types for filtering
+const DOCUMENT_TYPES = ['All', 'Translator', 'Summarize', 'Generate'];
 
 interface VersionDocument {
   id: string;
@@ -26,10 +30,12 @@ interface SuccessMessage {
 
 export default function VersionHistoryPage() {
   const [documents, setDocuments] = useState<VersionDocument[]>([]);
+  const [filteredDocuments, setFilteredDocuments] = useState<VersionDocument[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [successMessage, setSuccessMessage] = useState<SuccessMessage | null>(null);
   const [selectedDocument, setSelectedDocument] = useState<VersionDocument | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeFilter, setActiveFilter] = useState<string>('All');
 
   const fetchDocuments = async () => {
     try {
@@ -86,12 +92,67 @@ export default function VersionHistoryPage() {
       }
 
       setDocuments(limitedDocuments);
+      // Apply initial filter
+      filterDocuments(limitedDocuments, activeFilter);
     } catch (error) {
       console.error('Error fetching documents:', error);
       setDocuments([]);
+      setFilteredDocuments([]);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Function to detect document type based on title
+  const detectDocumentType = (document: VersionDocument): string => {
+    const title = document.title.toLowerCase();
+
+    // Check for exact prefixes first (prioritize these)
+    if (title.startsWith('summarized:') || title.includes('summarized:')) {
+      return 'Summarize';
+    } else if (title.startsWith('translation to') || title.startsWith('translator:')) {
+      return 'Translator';
+    } else if (title.startsWith('generate:')) {
+      return 'Generate';
+    }
+
+    // Fallback to more general keyword detection
+    if (
+      title.includes('summarize') ||
+      title.includes('summary') ||
+      title.includes('summarized')
+    ) {
+      return 'Summarize';
+    } else if (
+      title.includes('translate') ||
+      title.includes('translator') ||
+      title.includes('translation')
+    ) {
+      return 'Translator';
+    } else if (
+      title.includes('generate') ||
+      title.includes('created') ||
+      title.includes('creation')
+    ) {
+      return 'Generate';
+    }
+
+    return 'Other';
+  };
+
+  // Function to filter documents based on the selected type
+  const filterDocuments = (docs: VersionDocument[], filterType: string) => {
+    if (filterType === 'All') {
+      setFilteredDocuments(docs);
+    } else {
+      setFilteredDocuments(docs.filter((doc) => detectDocumentType(doc) === filterType));
+    }
+  };
+
+  // Handle filter change
+  const handleFilterChange = (filterType: string) => {
+    setActiveFilter(filterType);
+    filterDocuments(documents, filterType);
   };
 
   useEffect(() => {
@@ -115,6 +176,25 @@ export default function VersionHistoryPage() {
       window.removeEventListener('documentSaved', handleCustomEvent);
     };
   }, []);
+
+  // Apply filter when activeFilter changes
+  useEffect(() => {
+    filterDocuments(documents, activeFilter);
+  }, [activeFilter]);
+
+  // Function to get badge color based on document type
+  const getTypeBadgeColor = (type: string): string => {
+    switch (type) {
+      case 'Summarize':
+        return 'bg-green-600';
+      case 'Translator':
+        return 'bg-blue-600';
+      case 'Generate':
+        return 'bg-purple-600';
+      default:
+        return 'bg-gray-600';
+    }
+  };
 
   const handleDelete = async (id: string) => {
     try {
@@ -263,8 +343,56 @@ export default function VersionHistoryPage() {
         </div>
       )}
 
+      {/* Document type filters */}
+      <div className="mb-4 flex flex-wrap gap-2">
+        <button
+          key="All"
+          onClick={() => handleFilterChange('All')}
+          className={`px-3 py-1 rounded-md text-sm flex items-center gap-1 ${
+            activeFilter === 'All'
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-700 hover:bg-gray-600'
+          }`}
+        >
+          <FiLayers className="w-4 h-4" /> All
+        </button>
+        <button
+          key="Translator"
+          onClick={() => handleFilterChange('Translator')}
+          className={`px-3 py-1 rounded-md text-sm flex items-center gap-1 ${
+            activeFilter === 'Translator'
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-700 hover:bg-gray-600'
+          }`}
+        >
+          <MdTranslate className="w-4 h-4" /> Translator
+        </button>
+        <button
+          key="Summarize"
+          onClick={() => handleFilterChange('Summarize')}
+          className={`px-3 py-1 rounded-md text-sm flex items-center gap-1 ${
+            activeFilter === 'Summarize'
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-700 hover:bg-gray-600'
+          }`}
+        >
+          <BsFileEarmarkText className="w-4 h-4" /> Summarize
+        </button>
+        <button
+          key="Generate"
+          onClick={() => handleFilterChange('Generate')}
+          className={`px-3 py-1 rounded-md text-sm flex items-center gap-1 ${
+            activeFilter === 'Generate'
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-700 hover:bg-gray-600'
+          }`}
+        >
+          <AiOutlineFileAdd className="w-4 h-4" /> Generate
+        </button>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-        {documents.map((doc) => (
+        {filteredDocuments.map((doc) => (
           <motion.div
             key={doc.id}
             className="bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-500 rounded-md overflow-hidden hover:outline-none hover:ring-2 hover:ring-blue-500 cursor-pointer"
@@ -272,7 +400,18 @@ export default function VersionHistoryPage() {
             onClick={() => handleDocumentClick(doc)}
           >
             <div className="p-4">
-              <div className="text-xs text-gray-400 mb-1">{doc.date}</div>
+              <div className="flex justify-between items-center mb-1">
+                <div className="text-xs text-gray-400">{doc.date}</div>
+                {detectDocumentType(doc) !== 'Other' && (
+                  <div
+                    className={`text-xs px-2 py-0.5 rounded-full ${getTypeBadgeColor(
+                      detectDocumentType(doc)
+                    )}`}
+                  >
+                    {detectDocumentType(doc)}
+                  </div>
+                )}
+              </div>
               <h3 className="text-lg font-medium mb-2">{doc.title}</h3>
               <p className="text-sm text-gray-400 line-clamp-3">{doc.content}</p>
             </div>
@@ -309,12 +448,14 @@ export default function VersionHistoryPage() {
         ))}
       </div>
 
-      {documents.length === 0 && (
+      {filteredDocuments.length === 0 && (
         <div className="text-center py-12">
           <IoDocumentText className="mx-auto h-12 w-12 text-gray-400" />
-          <h3 className="mt-2 text-lg font-medium text-gray-400">No documents</h3>
+          <h3 className="mt-2 text-lg font-medium text-gray-400">No documents found</h3>
           <p className="mt-1 text-sm text-gray-500">
-            You haven't saved any documents yet.
+            {documents.length > 0
+              ? `No documents match the "${activeFilter}" filter.`
+              : "You haven't saved any documents yet."}
           </p>
         </div>
       )}
@@ -341,17 +482,31 @@ export default function VersionHistoryPage() {
 
               <div className="p-4 overflow-y-auto flex-grow">
                 <div className="mb-4 flex justify-between text-sm text-gray-400">
-                  <span>{selectedDocument.date}</span>
-                  <span>{selectedDocument.wordCount} words</span>
+                  <span>{selectedDocument?.date}</span>
+                  <div className="flex items-center gap-2">
+                    {selectedDocument &&
+                      detectDocumentType(selectedDocument) !== 'Other' && (
+                        <span
+                          className={`px-2 py-0.5 rounded-full text-xs ${getTypeBadgeColor(
+                            detectDocumentType(selectedDocument)
+                          )}`}
+                        >
+                          {detectDocumentType(selectedDocument)}
+                        </span>
+                      )}
+                    <span>{selectedDocument?.wordCount} words</span>
+                  </div>
                 </div>
-                <div className="whitespace-pre-wrap">{selectedDocument.content}</div>
+                <div className="whitespace-pre-wrap">{selectedDocument?.content}</div>
               </div>
 
               <div className="p-4 border-t border-gray-700 flex justify-end space-x-3">
                 <button
                   onClick={() => {
-                    handleDownload(selectedDocument);
-                    closeModal();
+                    if (selectedDocument) {
+                      handleDownload(selectedDocument);
+                      closeModal();
+                    }
                   }}
                   className="flex items-center px-4 py-2  bg-blue-600 hover:bg-blue-700 rounded-md"
                 >
@@ -360,8 +515,10 @@ export default function VersionHistoryPage() {
                 </button>
                 <button
                   onClick={() => {
-                    handleDelete(selectedDocument.id);
-                    closeModal();
+                    if (selectedDocument) {
+                      handleDelete(selectedDocument.id);
+                      closeModal();
+                    }
                   }}
                   className="flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 rounded-md"
                 >

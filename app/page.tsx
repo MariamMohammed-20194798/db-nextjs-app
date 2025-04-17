@@ -1,7 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { IoBulb } from 'react-icons/io5';
+import {
+  IoBulb,
+  IoLanguageOutline,
+  IoDocumentTextOutline,
+  IoCreateOutline,
+  IoTimerOutline,
+} from 'react-icons/io5';
 import { IoMdChatbubbles } from 'react-icons/io';
 
 export default function Home() {
@@ -18,9 +24,10 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Link
             href="/translator"
-            className="block p-6 bg-white dark:bg-gray-800 rounded-lg hover:scale-105 transition-all duration-300"
+            className="block p-6 bg-white dark:bg-gray-800 rounded-lg hover:scale-105 transition-all duration-300 border-2 border-blue-400"
           >
-            <h2 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">
+            <h2 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white flex items-center gap-2">
+              <IoLanguageOutline className="text-blue-400" />
               Translator
             </h2>
             <p className="text-gray-600 dark:text-gray-300">
@@ -30,9 +37,10 @@ export default function Home() {
 
           <Link
             href="/summarize"
-            className="block p-6 bg-white dark:bg-gray-800 rounded-lg hover:scale-105 transition-all duration-300"
+            className="block p-6 bg-white dark:bg-gray-800 rounded-lg hover:scale-105 transition-all duration-300 border-2 border-blue-400"
           >
-            <h2 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">
+            <h2 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white flex items-center gap-2">
+              <IoDocumentTextOutline className="text-blue-400" />
               Summarize
             </h2>
             <p className="text-gray-600 dark:text-gray-300">
@@ -42,9 +50,10 @@ export default function Home() {
 
           <Link
             href="/generate"
-            className="block p-6 bg-white dark:bg-gray-800 rounded-lg hover:scale-105 transition-all duration-300"
+            className="block p-6 bg-white dark:bg-gray-800 rounded-lg hover:scale-105 transition-all duration-300 border-2 border-blue-400"
           >
-            <h2 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">
+            <h2 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white flex items-center gap-2">
+              <IoCreateOutline className="text-blue-400" />
               Content Generator
             </h2>
             <p className="text-gray-600 dark:text-gray-300">
@@ -70,9 +79,10 @@ export default function Home() {
 
           <Link
             href="/version-history"
-            className="block p-6 bg-white dark:bg-gray-800 rounded-lg hover:scale-105 transition-all duration-300"
+            className="block p-6 bg-white dark:bg-gray-800 rounded-lg hover:scale-105 transition-all duration-300 border-2 border-blue-400"
           >
-            <h2 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">
+            <h2 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white flex items-center gap-2">
+              <IoTimerOutline className="text-blue-400" />
               Version History
             </h2>
             <p className="text-gray-600 dark:text-gray-300">

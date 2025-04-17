@@ -86,9 +86,16 @@ const SummarizeButton: React.FC<SummarizeButtonProps> = ({
     try {
       // Generate a title from the first line of the summary or first few words
       const firstLine = summary.split('\n')[0];
-      const title = firstLine.includes(',')
+      let titleText = firstLine.includes(',')
         ? firstLine.split(',')[0].trim()
         : firstLine.split(' ').slice(0, 5).join(' ');
+
+      // Ensure title isn't too long
+      if (titleText.length > 40) {
+        titleText = titleText.substring(0, 40) + '...';
+      }
+
+      const title = `Summarized: ${titleText}`;
 
       const response = await fetch('/api/history', {
         method: 'POST',
@@ -107,9 +114,40 @@ const SummarizeButton: React.FC<SummarizeButtonProps> = ({
         throw new Error(data.error || 'Failed to save to history');
       }
 
-      // Set the saved document ID for the chat button
+      // Store the newly created document in local storage for persistence
       if (data.document) {
+        // Set the saved document ID for the chat button
         setSavedDocumentId(data.document.id);
+
+        // Get existing documents or initialize empty array
+        const existingDocuments = JSON.parse(localStorage.getItem('documents') || '[]');
+
+        // Format the document to match the VersionDocument structure
+        const formattedDocument = {
+          id: data.document.id,
+          title: data.document.title,
+          content: data.document.content,
+          date: formatDate(data.document.created_at),
+          wordCount: data.document.word_count,
+        };
+
+        // Add new document to the beginning of the array
+        existingDocuments.unshift(formattedDocument);
+
+        // Limit to MAX_VERSIONS
+        if (existingDocuments.length > MAX_VERSIONS) {
+          existingDocuments.splice(MAX_VERSIONS);
+        }
+
+        // Save back to localStorage
+        localStorage.setItem('documents', JSON.stringify(existingDocuments));
+
+        // Trigger events to notify other components
+        localStorage.setItem('documentSaved', Date.now().toString());
+
+        // Dispatch custom event for same-tab updates
+        const event = new Event('documentSaved');
+        window.dispatchEvent(event);
       }
 
       setSaveSuccess(true);
@@ -157,6 +195,14 @@ const SummarizeButton: React.FC<SummarizeButtonProps> = ({
       router.push(`/chatbot?documentId=${savedDocumentId}`);
     }
   };
+
+  // Function to format date as "Apr 15" style
+  function formatDate(dateString: string) {
+    const date = new Date(dateString);
+    const month = date.toLocaleString('en-US', { month: 'short' });
+    const day = date.getDate();
+    return `${month} ${day}`;
+  }
 
   return (
     <div className="w-full">
