@@ -123,7 +123,9 @@ const AddSourceFile: React.FC<AddSourceFileProps> = ({
       <div
         ref={dropRef}
         className={`border-2 border-dashed rounded-md p-8 transition-colors flex flex-col items-center justify-center cursor-pointer ${
-          isDragging ? 'border-blue-500 bg-blue-900/10' : 'dark:border-blue-500'
+          isDragging
+            ? 'border-blue-500 bg-blue-100 dark:bg-blue-900/10'
+            : 'border-gray-300 dark:border-blue-500 bg-white dark:bg-gray-800'
         }`}
         onDragEnter={handleDragEnter}
         onDragOver={handleDragOver}
@@ -135,9 +137,13 @@ const AddSourceFile: React.FC<AddSourceFileProps> = ({
           className="h-12 w-12 text-blue-500 mb-2"
           style={{ fontSize: '3rem' }}
         />
-        <p className="text-white font-medium">Drag and Drop Here</p>
-        <p className="text-gray-400 text-sm">Max Size: {maxSizeMB}MB</p>
-        <p className="text-gray-400 text-sm mt-1">Only .txt file allowed</p>
+        <p className="text-gray-800 dark:text-white font-medium">Drag and Drop Here</p>
+        <p className="text-gray-500 dark:text-gray-400 text-sm">
+          Max Size: {maxSizeMB}MB
+        </p>
+        <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
+          Only .txt file allowed
+        </p>
       </div>
       <input
         ref={fileInputRef}
@@ -149,16 +155,18 @@ const AddSourceFile: React.FC<AddSourceFileProps> = ({
       />
 
       {fileError && (
-        <div className="mt-2 p-2 bg-red-100 border border-red-300 text-red-800 rounded text-sm">
+        <div className="mt-2 p-2 bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-800 text-red-800 dark:text-red-400 rounded text-sm">
           {fileError}
         </div>
       )}
 
       {uploadedFile && (
         <>
-          <div className="mt-4 p-3 bg-gray-100 border border-gray-200 rounded-md">
-            <p className="text-sm text-black font-medium">{uploadedFile.name}</p>
-            <p className="text-xs text-gray-500 mb-2">
+          <div className="mt-4 p-3 bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md">
+            <p className="text-sm text-gray-800 dark:text-white font-medium">
+              {uploadedFile.name}
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
               {(uploadedFile.size / 1024).toFixed(2)} KB •{' '}
               {uploadedFile.type || 'Unknown type'}
             </p>

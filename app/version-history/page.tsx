@@ -231,7 +231,11 @@ export default function VersionHistoryPage() {
         }
 
         // Remove from active documents
-        setDocuments(documents.filter((doc) => doc.id !== id));
+        const updatedDocuments = documents.filter((doc) => doc.id !== id);
+        setDocuments(updatedDocuments);
+
+        // Update filtered documents as well
+        setFilteredDocuments(filteredDocuments.filter((doc) => doc.id !== id));
 
         // Remove from localStorage active documents
         try {

@@ -33,7 +33,7 @@ const ContentGenerationForm: React.FC = () => {
   return (
     <div className="w-full">
       <div className="mb-6">
-        <label className="block text-md font-medium dark:text-gray-400 mb-1">
+        <label className="block text-md font-medium text-gray-700 dark:text-gray-300 mb-1">
           Content Type
         </label>
         <div className="flex flex-wrap gap-2">
@@ -56,7 +56,7 @@ const ContentGenerationForm: React.FC = () => {
       <div className="mb-6">
         <label
           htmlFor="topic"
-          className="block text-md font-medium dark:text-gray-400 mb-1"
+          className="block text-md font-medium text-gray-700 dark:text-gray-300 mb-1"
         >
           Topic or Subject
         </label>
@@ -71,7 +71,9 @@ const ContentGenerationForm: React.FC = () => {
       </div>
 
       <div className="mb-6">
-        <label className="block text-md font-medium dark:text-gray-400 mb-1">Tone</label>
+        <label className="block text-md font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Tone
+        </label>
         <div className="flex flex-wrap gap-2">
           {tones.map((t) => (
             <button
@@ -90,7 +92,7 @@ const ContentGenerationForm: React.FC = () => {
       </div>
 
       <div className="mb-6">
-        <label className="block text-md font-medium dark:text-gray-400 mb-1">
+        <label className="block text-md font-medium text-gray-700 dark:text-gray-300 mb-1">
           Length
         </label>
         <div className="flex gap-2">
@@ -113,7 +115,7 @@ const ContentGenerationForm: React.FC = () => {
       <div className="mb-4">
         <label
           htmlFor="additional-info"
-          className="block text-md font-medium dark:text-gray-400 mb-1"
+          className="block text-md font-medium text-gray-700 dark:text-gray-300 mb-1"
         >
           Additional Requirements (Optional)
         </label>

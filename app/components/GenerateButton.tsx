@@ -187,66 +187,91 @@ const GenerateButton: React.FC<GenerateButtonProps> = ({
         disabled={isDisabled || !contentType || !topic || loading}
         className={`mt-4 w-full py-2 px-4 rounded-md transition-colors ${
           isDisabled || !contentType || !topic
-            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
             : loading
-            ? 'bg-gray-500'
-            : 'dark:bg-blue-500 hover:bg-blue-600 text-white'
+            ? 'bg-gray-500 dark:bg-gray-600 text-white'
+            : 'bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white'
         }`}
       >
         {loading ? 'Generating...' : 'Generate Content'}
       </button>
 
       {error && (
-        <div className="mt-2 p-2 bg-red-100 border border-red-300 text-red-800 rounded">
-          <p className="font-medium">Error:</p>
-          <p>{error}</p>
-          <p className="text-xs mt-1">
-            Please check if your OpenAI API key is valid and properly configured.
-          </p>
+        <div className="mt-2 p-2 bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-800 text-red-800 dark:text-red-400 rounded">
+          {error}
         </div>
       )}
 
-      {showContent && generatedContent && (
-        <>
-          <div className="mt-4 p-4 bg-gray-100 border border-gray-200 rounded-md relative">
-            <button
-              onClick={closeContent}
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-            >
-              ✕
-            </button>
-            <h3 className="font-medium mb-2 text-black">Generated {contentType}:</h3>
-            <div className="text-sm text-black whitespace-pre-line">
-              {generatedContent}
+      {showContent && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] flex flex-col">
+            <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
+                Generated {contentType.charAt(0).toUpperCase() + contentType.slice(1)}
+              </h2>
+              <button
+                onClick={closeContent}
+                className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            <div className="p-4 overflow-y-auto flex-1">
+              <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-md border border-gray-200 dark:border-gray-600 whitespace-pre-wrap text-gray-800 dark:text-gray-200">
+                {generatedContent}
+              </div>
+            </div>
+
+            <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-between">
+              <div className="flex space-x-2">
+                <button
+                  id="copy-button"
+                  onClick={handleCopyToClipboard}
+                  className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                >
+                  Copy to Clipboard
+                </button>
+                <button
+                  onClick={handleSaveToHistory}
+                  disabled={savingToHistory}
+                  className={`px-4 py-2 rounded transition-colors ${
+                    savingToHistory
+                      ? 'bg-gray-400 dark:bg-gray-600 text-white cursor-not-allowed'
+                      : saveSuccess
+                      ? 'bg-green-500 text-white'
+                      : 'bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white'
+                  }`}
+                >
+                  {savingToHistory
+                    ? 'Saving...'
+                    : saveSuccess
+                    ? 'Saved!'
+                    : 'Save to History'}
+                </button>
+              </div>
+              <button
+                onClick={closeContent}
+                className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+              >
+                Close
+              </button>
             </div>
           </div>
-          <div className="mt-4 flex justify-between">
-            <button
-              id="copy-button"
-              onClick={handleCopyToClipboard}
-              className="px-4 py-1.5 rounded text-sm dark:bg-transparent border text-blue-500 border-blue-500 hover:scale-105"
-            >
-              Copy to Clipboard
-            </button>
-            <button
-              onClick={handleSaveToHistory}
-              disabled={savingToHistory}
-              className={`px-4 py-1.5 rounded text-sm dark:bg-transparent border ${
-                saveSuccess
-                  ? 'text-blue-500 border-blue-500 cursor-default'
-                  : savingToHistory
-                  ? 'text-blue-500 cursor-wait'
-                  : 'text-blue-500 border-blue-500 hover:scale-105'
-              }`}
-            >
-              {saveSuccess
-                ? 'Saved to History! 🎉'
-                : savingToHistory
-                ? 'Saving...'
-                : 'Save to History'}
-            </button>
-          </div>
-        </>
+        </div>
       )}
     </div>
   );
