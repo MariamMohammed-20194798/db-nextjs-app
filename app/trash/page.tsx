@@ -262,24 +262,28 @@ export default function TrashPage() {
         {trashedDocuments.map((doc) => (
           <motion.div
             key={doc.id}
-            className="bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-500 rounded-md overflow-hidden hover:outline-none hover:ring-2 hover:ring-blue-500 overflow-hidden cursor-pointer"
+            className="bg-white dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-500 rounded-md overflow-hidden hover:outline-none hover:ring-2 hover:ring-blue-500 overflow-hidden cursor-pointer shadow-sm hover:shadow-md"
             whileHover={{ y: -5, transition: { duration: 0.2 } }}
             onClick={() => openDocumentModal(doc)}
           >
             <div className="p-4">
               <div className="flex justify-between items-center mb-1">
-                <div className="text-xs text-gray-500">{doc.date}</div>
-                <div className="text-xs text-red-400">
+                <div className="text-xs text-gray-500 dark:text-gray-500">{doc.date}</div>
+                <div className="text-xs text-red-500 dark:text-red-400">
                   Expires in{' '}
                   {Math.ceil(24 - (Date.now() - (doc.trashedAt || 0)) / (60 * 60 * 1000))}{' '}
                   hours
                 </div>
               </div>
-              <h3 className="text-lg font-medium mb-2">{doc.title}</h3>
-              <p className="text-sm text-gray-400 line-clamp-3">{doc.content}</p>
+              <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-white">
+                {doc.title}
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3">
+                {doc.content}
+              </p>
             </div>
 
-            <div className="flex items-center justify-between p-2 border-t border-gray-100">
+            <div className="flex items-center justify-between p-2 border-t border-gray-200 dark:border-gray-600">
               <div className="flex items-center justify-center w-8 h-8 rounded-full bg-red-100 text-red-500">
                 <span>{doc.wordCount}</span>
               </div>
@@ -290,7 +294,7 @@ export default function TrashPage() {
                     e.stopPropagation();
                     handleRestoreFromTrash(doc.id);
                   }}
-                  className="p-2 text-gray-500 hover:text-blue-500"
+                  className="p-2 text-gray-600 dark:text-gray-500 hover:text-blue-500"
                   title="Restore from trash"
                 >
                   <MdRestore className="w-5 h-5" />
@@ -300,7 +304,7 @@ export default function TrashPage() {
                     e.stopPropagation();
                     handlePermanentDelete(doc.id);
                   }}
-                  className="p-2 text-gray-500 hover:text-blue-500"
+                  className="p-2 text-gray-600 dark:text-gray-500 hover:text-blue-500"
                   title="Delete permanently"
                 >
                   <FiTrash2 className="w-4 h-4" />
@@ -314,7 +318,9 @@ export default function TrashPage() {
       {trashedDocuments.length === 0 && (
         <div className="text-center py-50">
           <FiTrash2 className="mx-auto h-10 w-10 text-gray-400" />
-          <h3 className="mt-2 text-lg font-medium text-gray-400">Trash is empty</h3>
+          <h3 className="mt-2 text-lg font-medium text-gray-600 dark:text-gray-400">
+            Trash is empty
+          </h3>
           <p className="mt-1 text-sm text-gray-500">No documents in trash.</p>
         </div>
       )}
@@ -327,33 +333,37 @@ export default function TrashPage() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="bg-gray-800 rounded-lg max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden"
+              className="bg-blue-800 dark:bg-blue-900 rounded-lg max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden"
             >
-              <div className="flex items-center justify-between p-4 border-b border-gray-700">
-                <h2 className="text-xl font-semibold">{selectedDocument.title}</h2>
+              <div className="flex items-center justify-between p-4 border-b border-blue-700 dark:border-blue-800">
+                <h2 className="text-xl font-semibold text-white">
+                  {selectedDocument.title}
+                </h2>
                 <button
                   onClick={closeModal}
-                  className="p-1 hover:bg-gray-700 rounded-full"
+                  className="p-1 hover:bg-blue-700 dark:hover:bg-blue-800 rounded-full text-white"
                 >
                   <FiX className="w-6 h-6" />
                 </button>
               </div>
 
               <div className="p-4 overflow-y-auto flex-grow">
-                <div className="mb-4 flex justify-between text-sm text-gray-400">
+                <div className="mb-4 flex justify-between text-sm text-gray-200">
                   <span>{selectedDocument.date}</span>
                   <span>{selectedDocument.wordCount} words</span>
                 </div>
-                <div className="whitespace-pre-wrap">{selectedDocument.content}</div>
+                <div className="whitespace-pre-wrap text-white">
+                  {selectedDocument.content}
+                </div>
               </div>
 
-              <div className="p-4 border-t border-gray-700 flex justify-end space-x-3">
+              <div className="p-4 border-t border-blue-700 dark:border-blue-800 flex justify-end space-x-3">
                 <button
                   onClick={() => {
                     handleRestoreFromTrash(selectedDocument.id);
                     closeModal();
                   }}
-                  className="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md"
+                  className="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white"
                 >
                   <MdRestore className="w-4 h-4 mr-2" />
                   Restore
@@ -363,7 +373,7 @@ export default function TrashPage() {
                     handlePermanentDelete(selectedDocument.id);
                     closeModal();
                   }}
-                  className="flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 rounded-md"
+                  className="flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 rounded-md text-white"
                 >
                   <FiTrash2 className="w-4 h-4 mr-2" />
                   Delete Permanently

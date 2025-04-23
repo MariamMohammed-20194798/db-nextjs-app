@@ -14,14 +14,11 @@ import {
 } from 'react-icons/io5';
 import { IoLanguage } from 'react-icons/io5';
 import { IoMdChatbubbles } from 'react-icons/io';
-import { IoSunnyOutline, IoMoonOutline } from 'react-icons/io5';
 import { IoDesktopOutline } from 'react-icons/io5';
-import { useTheme } from '../utils/ThemeContext';
 
 export default function Sidebar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(true);
-  const { theme, setTheme } = useTheme();
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -143,47 +140,6 @@ export default function Sidebar() {
           {isOpen && 'Trash'}
         </Link>
       </nav>
-
-      {/* Theme toggle buttons */}
-      <div
-        className={`mt-auto flex ${
-          isOpen ? 'justify-evenly' : 'flex-col space-y-4 items-center'
-        } pt-4 border-t border-gray-200 dark:border-gray-700`}
-      >
-        <button
-          onClick={() => setTheme('light')}
-          className={`p-2 rounded-full ${
-            theme === 'light'
-              ? 'bg-blue-100 text-blue-600 dark:bg-gray-700 dark:text-yellow-500'
-              : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700'
-          }`}
-          title="Light Theme"
-        >
-          <IoSunnyOutline className="w-5 h-5" />
-        </button>
-        <button
-          onClick={() => setTheme('dark')}
-          className={`p-2 rounded-full ${
-            theme === 'dark'
-              ? 'bg-blue-100 text-blue-600 dark:bg-gray-700 dark:text-blue-400'
-              : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700'
-          }`}
-          title="Dark Theme"
-        >
-          <IoMoonOutline className="w-5 h-5" />
-        </button>
-        <button
-          onClick={() => setTheme('system')}
-          className={`p-2 rounded-full ${
-            theme === 'system'
-              ? 'bg-blue-100 text-blue-600 dark:bg-gray-700 dark:text-green-500'
-              : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700'
-          }`}
-          title="System Theme"
-        >
-          <IoDesktopOutline className="w-5 h-5" />
-        </button>
-      </div>
     </aside>
   );
 }

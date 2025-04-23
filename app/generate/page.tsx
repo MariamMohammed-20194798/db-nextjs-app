@@ -17,7 +17,7 @@ export default function GeneratePage() {
         />
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
+      <div className="rounded-lg">
         <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">
           What would you like to create?
         </h2>

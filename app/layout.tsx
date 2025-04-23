@@ -6,13 +6,39 @@ import Sidebar from './components/Sidebar';
 import { usePathname } from 'next/navigation';
 import { ThemeProvider } from './utils/ThemeContext';
 
+// Simple component to check system dark mode preference
+function SystemThemeInitializer() {
+  return (
+    <script
+      dangerouslySetInnerHTML={{
+        __html: `
+        (function() {
+          // Check system preference and apply theme
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var root = document.documentElement;
+          
+          if (prefersDark) {
+            root.classList.add('dark');
+          } else {
+            root.classList.remove('dark');
+          }
+        })();
+      `,
+      }}
+    />
+  );
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full">
+    <html lang="en" className="h-full dark">
+      <head>
+        <SystemThemeInitializer />
+      </head>
       <body className="flex h-screen overflow-hidden bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-white">
         <ThemeProvider>
           <CustomSidebar />

@@ -203,10 +203,10 @@ const GenerateButton: React.FC<GenerateButtonProps> = ({
       )}
 
       {showContent && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 backdrop-blur-md bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] flex flex-col">
             <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-              <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
+              <h2 className="text-lg j font-semibold text-gray-800 dark:text-white">
                 Generated {contentType.charAt(0).toUpperCase() + contentType.slice(1)}
               </h2>
               <button
@@ -231,7 +231,7 @@ const GenerateButton: React.FC<GenerateButtonProps> = ({
             </div>
 
             <div className="p-4 overflow-y-auto flex-1">
-              <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-md border border-gray-200 dark:border-gray-600 whitespace-pre-wrap text-gray-800 dark:text-gray-200">
+              <div className="p-4 rounded-md whitespace-pre-wrap text-gray-800 dark:text-gray-200">
                 {generatedContent}
               </div>
             </div>
