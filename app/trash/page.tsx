@@ -333,39 +333,52 @@ export default function TrashPage() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="bg-blue-800 dark:bg-blue-900 rounded-lg max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden"
+              className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] flex flex-col overflow-hidden"
             >
-              <div className="flex items-center justify-between p-4 border-b border-blue-700 dark:border-blue-800">
-                <h2 className="text-xl font-semibold text-white">
+              <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
                   {selectedDocument.title}
                 </h2>
                 <button
                   onClick={closeModal}
-                  className="p-1 hover:bg-blue-700 dark:hover:bg-blue-800 rounded-full text-white"
+                  className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
                 >
-                  <FiX className="w-6 h-6" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
                 </button>
               </div>
 
               <div className="p-4 overflow-y-auto flex-grow">
-                <div className="mb-4 flex justify-between text-sm text-gray-200">
+                <div className="mb-4 flex justify-between text-sm text-gray-400">
                   <span>{selectedDocument.date}</span>
                   <span>{selectedDocument.wordCount} words</span>
                 </div>
-                <div className="whitespace-pre-wrap text-white">
+                <div className="p-4 rounded-md whitespace-pre-wrap text-gray-800 dark:text-gray-200">
                   {selectedDocument.content}
                 </div>
               </div>
 
-              <div className="p-4 border-t border-blue-700 dark:border-blue-800 flex justify-end space-x-3">
+              <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-end space-x-3">
                 <button
                   onClick={() => {
                     handleRestoreFromTrash(selectedDocument.id);
                     closeModal();
                   }}
-                  className="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white"
+                  className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
                 >
-                  <MdRestore className="w-4 h-4 mr-2" />
+                  <MdRestore className="w-4 h-4 mr-2 inline" />
                   Restore
                 </button>
                 <button
@@ -373,9 +386,9 @@ export default function TrashPage() {
                     handlePermanentDelete(selectedDocument.id);
                     closeModal();
                   }}
-                  className="flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 rounded-md text-white"
+                  className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded text-white transition-colors"
                 >
-                  <FiTrash2 className="w-4 h-4 mr-2" />
+                  <FiTrash2 className="w-4 h-4 mr-2 inline" />
                   Delete Permanently
                 </button>
               </div>
