@@ -406,15 +406,6 @@ export default function VersionHistoryPage() {
             <div className="p-4">
               <div className="flex justify-between items-center mb-1">
                 <div className="text-xs text-gray-500 dark:text-gray-400">{doc.date}</div>
-                {detectDocumentType(doc) !== 'Other' && (
-                  <div
-                    className={`text-xs px-2 py-0.5 rounded-full ${getTypeBadgeColor(
-                      detectDocumentType(doc)
-                    )}`}
-                  >
-                    {detectDocumentType(doc)}
-                  </div>
-                )}
               </div>
               <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-white">
                 {doc.title}

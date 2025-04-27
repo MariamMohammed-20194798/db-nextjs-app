@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-
+import { FiCopy, FiSave, FiMessageCircle } from 'react-icons/fi';
 // Maximum number of versions to keep
 const MAX_VERSIONS = 9;
 
@@ -23,6 +23,7 @@ const SummarizeButton: React.FC<SummarizeButtonProps> = ({
   const [savingToHistory, setSavingToHistory] = useState<boolean>(false);
   const [saveSuccess, setSaveSuccess] = useState<boolean>(false);
   const [savedDocumentId, setSavedDocumentId] = useState<string | null>(null);
+  const [copySuccess, setCopySuccess] = useState<boolean>(false);
 
   const handleSummarize = async () => {
     if (!content || isDisabled) return;
@@ -32,6 +33,7 @@ const SummarizeButton: React.FC<SummarizeButtonProps> = ({
     setSummary('');
     setSaveSuccess(false);
     setSavedDocumentId(null);
+    setShowSummary(true);
 
     try {
       console.log(
@@ -61,7 +63,6 @@ const SummarizeButton: React.FC<SummarizeButtonProps> = ({
       }
 
       setSummary(data.summary);
-      setShowSummary(true);
     } catch (err) {
       console.error('Error during summarization:', err);
       setError(
@@ -202,14 +203,10 @@ const SummarizeButton: React.FC<SummarizeButtonProps> = ({
     navigator.clipboard
       .writeText(summary)
       .then(() => {
-        // Show brief feedback
-        const copyButton = document.getElementById('copy-button');
-        if (copyButton) {
-          copyButton.textContent = 'Copied!';
-          setTimeout(() => {
-            copyButton.textContent = 'Copy to Clipboard';
-          }, 2000);
-        }
+        setCopySuccess(true);
+        setTimeout(() => {
+          setCopySuccess(false);
+        }, 2000);
       })
       .catch((err) => {
         console.error('Failed to copy content: ', err);
@@ -233,7 +230,7 @@ const SummarizeButton: React.FC<SummarizeButtonProps> = ({
           isDisabled
             ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
             : loading
-            ? 'bg-gray-500 dark:bg-gray-600 text-white'
+            ? 'bg-gray-400 text-white cursor-wait'
             : 'bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white'
         }`}
       >
@@ -246,80 +243,86 @@ const SummarizeButton: React.FC<SummarizeButtonProps> = ({
         </div>
       )}
 
+      {/* Inline Summary Section */}
       {showSummary && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] flex flex-col">
-            <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-              <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
-                Document Summary
-              </h2>
-              <button
-                onClick={closeSummary}
-                className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
-              >
+        <div className="mt-6 border-t border-gray-200 dark:border-gray-600 pt-4">
+          <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+            Summary
+          </h3>
+
+          <div className="relative w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white min-h-[100px] mb-3">
+            {loading ? (
+              <div className="flex items-center justify-center h-full min-h-[100px] text-gray-500">
                 <svg
+                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-500"
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke="currentColor"
                 >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
                   <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
                 </svg>
-              </button>
-            </div>
-
-            <div className="p-4 overflow-y-auto flex-1">
-              <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-md border border-gray-200 dark:border-gray-600 whitespace-pre-wrap text-gray-800 dark:text-gray-200">
-                {summary}
+                <span>Generating summary...</span>
               </div>
-            </div>
+            ) : (
+              <p className="whitespace-pre-wrap">{summary}</p>
+            )}
+          </div>
 
-            <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-between">
-              <div className="flex space-x-2">
-                <button
-                  id="copy-button"
-                  onClick={handleCopyToClipboard}
-                  className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-                >
-                  Copy to Clipboard
-                </button>
-                <button
-                  onClick={handleSaveToHistory}
-                  disabled={savingToHistory}
-                  className={`px-4 py-2 rounded transition-colors ${
-                    savingToHistory
-                      ? 'bg-gray-400 dark:bg-gray-600 text-white cursor-not-allowed'
-                      : saveSuccess
-                      ? 'bg-green-500 text-white'
-                      : 'bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white'
-                  }`}
-                >
-                  {savingToHistory
-                    ? 'Saving...'
-                    : saveSuccess
-                    ? 'Saved!'
-                    : 'Save to History'}
-                </button>
-                <button
-                  onClick={handleChatWithSummary}
-                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded transition-colors"
-                >
-                  Chat with AI
-                </button>
-              </div>
-              <button
-                onClick={closeSummary}
-                className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-              >
-                Close
-              </button>
-            </div>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={handleCopyToClipboard}
+              disabled={!summary || loading}
+              className={`flex items-center px-3 py-2 rounded-md text-sm ${
+                !summary || loading
+                  ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                  : copySuccess
+                  ? 'bg-green-500 text-white'
+                  : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors'
+              }`}
+            >
+              <FiCopy className="mr-1" />
+              {copySuccess ? 'Copied!' : 'Copy'}
+            </button>
+            <button
+              onClick={handleSaveToHistory}
+              disabled={!summary || loading || savingToHistory}
+              className={`flex items-center px-3 py-2 rounded-md text-sm ${
+                !summary || loading
+                  ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                  : savingToHistory
+                  ? 'bg-gray-400 dark:bg-gray-600 text-white cursor-not-allowed'
+                  : saveSuccess
+                  ? 'bg-blue-500 dark:bg-blue-400 text-white'
+                  : 'bg-gray-200 dark:bg-blue-500 hover:bg-gray-300 text-black'
+              }`}
+            >
+              <FiSave className="mr-1" />
+              {savingToHistory ? 'Saving...' : saveSuccess ? 'Saved!' : 'Save to History'}
+            </button>
+            <button
+              onClick={handleChatWithSummary}
+              disabled={!summary || loading}
+              className={`flex items-center px-3 py-2 rounded-md text-sm ${
+                !summary || loading
+                  ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                  : 'bg-gray-200 hover:bg-gray-300 text-black'
+              }`}
+            >
+              <FiMessageCircle className="mr-1" />
+              Chat with AI
+            </button>
           </div>
         </div>
       )}

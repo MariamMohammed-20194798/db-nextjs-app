@@ -5,6 +5,7 @@ import { IoLanguage } from 'react-icons/io5';
 import { MdSwapHoriz } from 'react-icons/md';
 import { IoVolumeHigh, IoPauseSharp } from 'react-icons/io5';
 import { Dropdown, DropdownMenu, DropdownItem, DropdownTrigger } from '@nextui-org/react';
+import { FiCopy, FiSave, FiMessageCircle } from 'react-icons/fi';
 
 export default function TranslatorPage() {
   const [sourceText, setSourceText] = useState('');
@@ -22,6 +23,11 @@ export default function TranslatorPage() {
   const [error, setError] = useState<string | null>(null);
   const [isSourceSpeaking, setIsSourceSpeaking] = useState(false);
   const [isTargetSpeaking, setIsTargetSpeaking] = useState(false);
+  const [summarizedText, setSummarizedText] = useState('');
+  const [isSummarizing, setIsSummarizing] = useState(false);
+  const [showSummary, setShowSummary] = useState(false);
+  const [copySuccess, setCopySuccess] = useState(false);
+  const [saveSummarySuccess, setSaveSummarySuccess] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Voice mapping for different languages (ElevenLabs voice IDs)
@@ -368,6 +374,128 @@ export default function TranslatorPage() {
     return `${month} ${day}`;
   }
 
+  // Add a new function to handle summarization
+  const handleSummarize = async (textToSummarize: string, languageLabel: string) => {
+    if (!textToSummarize.trim()) return;
+
+    setIsSummarizing(true);
+    setShowSummary(true);
+    setError(null);
+
+    try {
+      const response = await fetch('/api/summarize', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          content: textToSummarize,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Summarization failed');
+      }
+
+      const data = await response.json();
+      setSummarizedText(data.summary);
+    } catch (err) {
+      console.error('Summarization error:', err);
+      setError(err instanceof Error ? err.message : 'Failed to summarize text');
+      setSummarizedText('');
+    } finally {
+      setIsSummarizing(false);
+    }
+  };
+
+  // Function to copy the summary to clipboard
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(summarizedText);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy text:', err);
+      setError('Failed to copy to clipboard');
+    }
+  };
+
+  // Function to save summary to history
+  const saveSummaryToHistory = async () => {
+    if (!summarizedText) return;
+
+    try {
+      // Generate a title from the first line of the summary or first few words
+      const title =
+        `Summary of ${targetLanguageLabel} Translation: ` +
+        (summarizedText.split('\n')[0].substring(0, 40) ||
+          summarizedText.split(' ').slice(0, 5).join(' ') + '...');
+
+      const response = await fetch('/api/history', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title,
+          content: summarizedText,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to save summary to history');
+      }
+
+      // Handle successful save
+      if (data.document) {
+        // Get existing documents or initialize empty array
+        const existingDocuments = JSON.parse(localStorage.getItem('documents') || '[]');
+
+        // Format the document
+        const formattedDocument = {
+          id: data.document.id,
+          title: data.document.title,
+          content: data.document.content,
+          date: formatDate(data.document.created_at),
+          wordCount: data.document.word_count,
+        };
+
+        // Add to documents
+        existingDocuments.unshift(formattedDocument);
+        if (existingDocuments.length > MAX_VERSIONS) {
+          existingDocuments.splice(MAX_VERSIONS);
+        }
+
+        localStorage.setItem('documents', JSON.stringify(existingDocuments));
+        localStorage.setItem('documentSaved', Date.now().toString());
+        const event = new Event('documentSaved');
+        window.dispatchEvent(event);
+      }
+
+      setSaveSummarySuccess(true);
+      setTimeout(() => {
+        setSaveSummarySuccess(false);
+      }, 2000);
+    } catch (err) {
+      console.error('Error saving summary to history:', err);
+      setError(err instanceof Error ? err.message : 'Failed to save summary');
+    }
+  };
+
+  // Function to open chat with the summary
+  const openChatWithSummary = () => {
+    if (!summarizedText) return;
+
+    // Store summary in localStorage for the chat page to access
+    localStorage.setItem('chatContent', summarizedText);
+
+    // Navigate to chat page
+    window.location.href = '/chatbot';
+  };
+
   return (
     <div className="max-w-5xl mx-auto">
       <HeaderSection
@@ -627,25 +755,138 @@ export default function TranslatorPage() {
 
         <div className="mt-4 flex justify-end">
           {sourceText.trim() && translatedText && !isTranslating && (
-            <button
-              onClick={handleSaveToHistory}
-              disabled={savingToHistory}
-              className={`px-4 py-2 rounded-md text-sm ${
-                saveSuccess
-                  ? 'dark:bg-blue-400 text-white cursor-default'
+            <>
+              <Dropdown className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-white">
+                <DropdownTrigger>
+                  <button
+                    disabled={isSummarizing}
+                    className={`px-4 py-2 rounded-md text-sm mr-2 ${
+                      isSummarizing
+                        ? 'bg-gray-400 text-white cursor-wait'
+                        : 'bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white'
+                    }`}
+                  >
+                    {isSummarizing ? 'Summarizing...' : 'Summarize'}
+                  </button>
+                </DropdownTrigger>
+                <DropdownMenu aria-label="Summarize Options">
+                  <DropdownItem
+                    key="source"
+                    className="hover:bg-gray-100 dark:hover:bg-gray-600 mb-2"
+                    onClick={() => handleSummarize(sourceText, sourceLanguageLabel)}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span>{sourceLanguageLabel}</span>
+                    </div>
+                  </DropdownItem>
+                  <DropdownItem
+                    key="target"
+                    className="hover:bg-gray-100 dark:hover:bg-gray-600"
+                    onClick={() => handleSummarize(translatedText, targetLanguageLabel)}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span>{targetLanguageLabel}</span>
+                    </div>
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+
+              <button
+                onClick={handleSaveToHistory}
+                disabled={savingToHistory}
+                className={`px-4 py-2 rounded-md text-sm ${
+                  saveSuccess
+                    ? 'bg-blue-500 dark:bg-blue-400 text-white cursor-default'
+                    : savingToHistory
+                    ? 'bg-gray-400 text-white cursor-wait'
+                    : 'bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white'
+                }`}
+              >
+                {saveSuccess
+                  ? 'Saved to History! 🎉'
                   : savingToHistory
-                  ? 'bg-gray-400 text-white cursor-wait'
-                  : 'dark:bg-blue-500 dark:hover:bg-blue-600 text-white'
-              }`}
-            >
-              {saveSuccess
-                ? 'Saved to History! 🎉'
-                : savingToHistory
-                ? 'Saving...'
-                : 'Save to History'}
-            </button>
+                  ? 'Saving...'
+                  : 'Save to History'}
+              </button>
+            </>
           )}
         </div>
+
+        {/* Summary Section */}
+        {showSummary && (
+          <div className="mt-6 border-t border-gray-200 dark:border-gray-600 pt-4">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+              Summary
+            </h3>
+
+            <div className="relative w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white min-h-[100px] mb-3">
+              {isSummarizing ? (
+                <div className="flex items-center justify-center h-full min-h-[100px] text-gray-500">
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-500"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  <span>Generating summary...</span>
+                </div>
+              ) : (
+                <p>{summarizedText}</p>
+              )}
+            </div>
+
+            <div className="flex space-x-2">
+              <button
+                onClick={copyToClipboard}
+                disabled={!summarizedText || isSummarizing}
+                className={`flex items-center px-3 py-2 rounded-md text-sm ${
+                  copySuccess
+                    ? 'bg-green-500 text-white'
+                    : 'bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-white'
+                }`}
+              >
+                <FiCopy className="mr-1" />
+                {copySuccess ? 'Copied!' : 'Copy'}
+              </button>
+
+              <button
+                onClick={saveSummaryToHistory}
+                disabled={!summarizedText || isSummarizing}
+                className={`flex items-center px-3 py-2 rounded-md text-sm ${
+                  saveSummarySuccess
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-white'
+                }`}
+              >
+                <FiSave className="mr-1" />
+                {saveSummarySuccess ? 'Saved!' : 'Save to History'}
+              </button>
+
+              <button
+                onClick={openChatWithSummary}
+                disabled={!summarizedText || isSummarizing}
+                className="flex items-center px-3 py-2 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-white rounded-md text-sm"
+              >
+                <FiMessageCircle className="mr-1" />
+                Chat
+              </button>
+            </div>
+          </div>
+        )}
 
         {error && (
           <div className="mt-2 p-2 bg-red-100 border border-red-300 text-red-800 rounded">
