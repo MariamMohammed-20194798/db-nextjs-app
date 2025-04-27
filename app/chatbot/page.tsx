@@ -81,7 +81,7 @@ export default function ChatbotPage() {
       </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        <div className="lg:col-span-1 bg-white dark:bg-gray-500 p-2 rounded-lg shadow h-[calc(90vh-80px)] flex flex-col">
+        <div className="lg:col-span-1 bg-white dark:bg-gray-500 p-2 rounded-lg shadow h-[calc(85vh-80px)] flex flex-col">
           <h3 className="text-lg font-bold mb-4 text-gray-900 dark:text-white">
             Your Content
           </h3>
@@ -129,7 +129,7 @@ export default function ChatbotPage() {
           )}
         </div>
 
-        <div className="lg:col-span-3 bg-white dark:bg-gray-800 rounded-lg shadow flex flex-col h-[calc(90vh-80px)]">
+        <div className="lg:col-span-3 bg-white dark:bg-gray-800 rounded-lg shadow flex flex-col h-[calc(85vh-80px)]">
           {!selectedDocId ? (
             <div className="flex-1 flex flex-col items-center justify-center p-6 text-center text-gray-500 dark:text-gray-400">
               <IoMdChatbubbles className="w-16 h-16 mb-4 opacity-50" />

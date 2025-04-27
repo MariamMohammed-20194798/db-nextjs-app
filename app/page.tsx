@@ -15,8 +15,8 @@ export default function Home() {
     <div className="h-full max-w-7xl mx-auto bg-gray-50 dark:bg-gray-900 flex flex-col rounded-lg">
       <main className="flex-1 p-6 md:p-12">
         <div className="flex items-center justify-center gap-3 mb-8">
-          <IoBulb className="w-10 h-10 text-blue-400 animate-pulse" />
-          <h1 className="text-3xl text-center font-bold text-blue-400 animate-pulse">
+          <IoBulb className="w-10 h-10 text-blue-500 animate-pulse" />
+          <h1 className="text-3xl text-center font-bold text-blue-500 animate-pulse">
             Welcome to DocuBrain
           </h1>
         </div>
@@ -67,10 +67,7 @@ export default function Home() {
           >
             <h2 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white flex items-center gap-2">
               <IoMdChatbubbles className="text-blue-400" />
-              AI Chatbot{' '}
-              <span className="text-xs bg-blue-400 text-white px-2 py-0.5 rounded-full">
-                New
-              </span>
+              AI Chatbot
             </h2>
             <p className="text-gray-600 dark:text-gray-300">
               Chat with your documents and get instant answers to your questions.
@@ -91,10 +88,6 @@ export default function Home() {
           </Link>
         </div>
       </main>
-
-      <footer className="bg-white dark:bg-gray-800 shadow py-4 px-6 text-center text-gray-600 dark:text-gray-300">
-        <p>© 2023 DocuBrain. All rights reserved.</p>
-      </footer>
     </div>
   );
 }

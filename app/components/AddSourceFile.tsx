@@ -125,7 +125,7 @@ const AddSourceFile: React.FC<AddSourceFileProps> = ({
         className={`border-2 border-dashed rounded-md p-8 transition-colors flex flex-col items-center justify-center cursor-pointer ${
           isDragging
             ? 'border-blue-500 bg-blue-100 dark:bg-blue-900/10'
-            : 'border-gray-300 dark:border-blue-500 bg-white dark:bg-gray-800'
+            : 'border-blue-600 dark:border-blue-500 bg-white dark:bg-gray-800'
         }`}
         onDragEnter={handleDragEnter}
         onDragOver={handleDragOver}

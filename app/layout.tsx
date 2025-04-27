@@ -42,9 +42,14 @@ export default function RootLayout({
       <body className="flex h-screen overflow-hidden bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-white">
         <ThemeProvider>
           <CustomSidebar />
-          <main className="flex-1 h-screen overflow-y-auto p-4 sm:p-8 md:p-12 bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-white">
-            {children}
-          </main>
+          <div className="flex flex-col flex-1 h-screen">
+            <main className="flex-1 overflow-y-auto p-4 sm:p-8 md:p-12 bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-white">
+              {children}
+            </main>
+            <footer className="py-5 px-6 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 text-center text-sm text-gray-600 dark:text-gray-400">
+              © 2025 DocuBrains. All rights reserved.
+            </footer>
+          </div>
         </ThemeProvider>
       </body>
     </html>
