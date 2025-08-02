@@ -34,6 +34,17 @@ export async function POST(req: Request) {
     // Calculate word count
     const wordCount = content.trim().split(/\s+/).length;
 
+    // Check if Supabase is configured
+    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_API_KEY) {
+      console.error('Supabase not configured');
+      return NextResponse.json(
+        {
+          error: 'Database not configured. Please set up Supabase environment variables.',
+        },
+        { status: 500 }
+      );
+    }
+
     // Insert into Supabase
     const { data, error } = await supabase
       .from('documents')
@@ -50,7 +61,7 @@ export async function POST(req: Request) {
     if (error) {
       console.error('Failed to save to history:', error);
       return NextResponse.json(
-        { error: 'Failed to save document to history' },
+        { error: `Failed to save document to history: ${error.message}` },
         { status: 500 }
       );
     }
@@ -58,7 +69,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ document: data });
   } catch (error) {
     console.error('Error in history API:', error);
-    return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: error instanceof Error ? error.message : 'An unexpected error occurred',
+      },
+      { status: 500 }
+    );
   }
 }
 
