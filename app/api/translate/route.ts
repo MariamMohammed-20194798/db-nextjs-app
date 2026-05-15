@@ -45,8 +45,36 @@ export async function POST(req: NextRequest) {
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(`OpenAI API error: ${error.error?.message || response.statusText}`);
+      const errorBody = await response.json();
+      const message =
+        errorBody.error?.message || response.statusText || 'Unknown OpenAI API error';
+
+      if (message.includes('quota') || message.includes('billing')) {
+        return NextResponse.json(
+          {
+            error:
+              'Translation is unavailable: your OpenAI API quota has been exceeded. Add billing or credits at platform.openai.com.',
+            code: 'quota_exceeded',
+          },
+          { status: 503 }
+        );
+      }
+
+      if (response.status === 429) {
+        return NextResponse.json(
+          { error: 'Translation rate limit reached. Please try again in a moment.', code: 'rate_limited' },
+          { status: 429 }
+        );
+      }
+
+      if (response.status === 401) {
+        return NextResponse.json(
+          { error: 'Invalid OpenAI API key. Check OPENAI_API_KEY in .env.local.', code: 'invalid_api_key' },
+          { status: 401 }
+        );
+      }
+
+      return NextResponse.json({ error: `OpenAI API error: ${message}` }, { status: 502 });
     }
 
     const data = await response.json();
@@ -63,9 +91,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error('Translation error:', error);
     return NextResponse.json(
-      {
-        error: error instanceof Error ? error.message : 'Failed to translate content',
-      },
+      { error: 'Failed to translate content. Please try again.' },
       { status: 500 }
     );
   }

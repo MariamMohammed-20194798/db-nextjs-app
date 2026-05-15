@@ -224,6 +224,7 @@ export default function TranslatorPage() {
 
       const timeout = setTimeout(async () => {
         setIsTranslating(true);
+        setError(null);
         try {
           const response = await fetch('/api/translate', {
             method: 'POST',
@@ -247,6 +248,9 @@ export default function TranslatorPage() {
           setTranslatedText(data.translation);
         } catch (error) {
           console.error('Translation error:', error);
+          setError(
+            error instanceof Error ? error.message : 'Translation failed. Please try again.'
+          );
         } finally {
           setIsTranslating(false);
         }
