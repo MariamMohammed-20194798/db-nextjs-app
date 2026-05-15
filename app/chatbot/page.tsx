@@ -1,5 +1,6 @@
-'use client';
-import React, { useState, useEffect } from 'react';
+"use client";
+
+import React, { Suspense, useState, useEffect } from 'react';
 import { IoMdChatbubbles } from 'react-icons/io';
 import HeaderSection from '../components/HeaderSection';
 import ChatInterface from './components/ChatInterface';
@@ -15,7 +16,7 @@ interface Document {
   content?: string;
 }
 
-export default function ChatbotPage() {
+function ChatbotPageContent() {
   const searchParams = useSearchParams();
   const urlDocumentId = searchParams.get('documentId');
 
@@ -144,5 +145,36 @@ export default function ChatbotPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+function ChatbotPageFallback() {
+  return (
+    <div className="max-w-6xl mx-auto">
+      <motion.div
+        layout
+        className="flex-shrink-0 w-full flex justify-between gap-10 mb-6"
+      >
+        <HeaderSection
+          inline
+          className="mb-5"
+          title="AI Chatbot"
+          desc="Ask questions about your documents and summaries"
+          icon={<IoMdChatbubbles className="w-10 h-10" />}
+          key="chatbot-header"
+        />
+      </motion.div>
+      <div className="flex justify-center items-center h-[calc(85vh-80px)]">
+        <motion.div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
+      </div>
+    </div>
+  );
+}
+
+export default function ChatbotPage() {
+  return (
+    <Suspense fallback={<ChatbotPageFallback />}>
+      <ChatbotPageContent />
+    </Suspense>
   );
 }
