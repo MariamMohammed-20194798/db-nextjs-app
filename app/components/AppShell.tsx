@@ -51,7 +51,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 </button>
               ) : null}
 
-              <Link href="/" className="flex min-w-0 items-center gap-3 rounded-2xl px-1 py-1 transition hover:bg-slate-100/70 dark:hover:bg-slate-800/70">
+              <Link
+                href="/"
+                className="flex min-w-0 items-center gap-3 rounded-2xl px-1 py-1 transition hover:bg-slate-100/70 dark:hover:bg-slate-800/70"
+              >
                 <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-500 via-blue-600 to-indigo-600 text-white shadow-lg shadow-sky-500/20">
                   <IoSparkles className="h-5 w-5" />
                 </div>
@@ -90,8 +93,12 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                         <IoSparkles className="h-5 w-5" />
                       </div>
                       <div>
-                        <p className="font-semibold text-slate-900 dark:text-white">DocuBrain</p>
-                        <p className="text-xs text-slate-500 dark:text-slate-400">Quick navigation</p>
+                        <p className="font-semibold text-slate-900 dark:text-white">
+                          DocuBrain
+                        </p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">
+                          Quick navigation
+                        </p>
                       </div>
                     </div>
                     <button

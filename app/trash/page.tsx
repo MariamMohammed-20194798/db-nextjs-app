@@ -48,7 +48,7 @@ export default function TrashPage() {
           const now = Date.now();
           const twentyFourHoursInMs = 24 * 60 * 60 * 1000;
           localTrashedDocuments = localTrashedDocuments.filter(
-            (doc) => doc.trashedAt && now - doc.trashedAt < twentyFourHoursInMs
+            (doc) => doc.trashedAt && now - doc.trashedAt < twentyFourHoursInMs,
           );
           localStorage.setItem('trashedDocuments', JSON.stringify(localTrashedDocuments));
         }
@@ -109,7 +109,7 @@ export default function TrashPage() {
           if (storedTrashedDocs) {
             const parsedTrashedDocs = JSON.parse(storedTrashedDocs);
             const updatedTrashedDocs = parsedTrashedDocs.filter(
-              (doc: TrashedDocument) => doc.id !== id
+              (doc: TrashedDocument) => doc.id !== id,
             );
             localStorage.setItem('trashedDocuments', JSON.stringify(updatedTrashedDocs));
           }
@@ -156,7 +156,7 @@ export default function TrashPage() {
         if (storedTrashedDocs) {
           const parsedTrashedDocs = JSON.parse(storedTrashedDocs);
           const updatedTrashedDocs = parsedTrashedDocs.filter(
-            (doc: TrashedDocument) => doc.id !== id
+            (doc: TrashedDocument) => doc.id !== id,
           );
           localStorage.setItem('trashedDocuments', JSON.stringify(updatedTrashedDocs));
         }
@@ -240,11 +240,17 @@ export default function TrashPage() {
               <div className="mb-2 flex items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400">
                 <span>{doc.date}</span>
                 <span className="rounded-full bg-red-50 px-2 py-1 text-[11px] text-red-600 dark:bg-red-950/40 dark:text-red-300">
-                  Expires in {Math.ceil(24 - (Date.now() - (doc.trashedAt || 0)) / (60 * 60 * 1000))}h
+                  Expires in{' '}
+                  {Math.ceil(24 - (Date.now() - (doc.trashedAt || 0)) / (60 * 60 * 1000))}
+                  h
                 </span>
               </div>
-              <h3 className="mb-2 text-lg font-semibold text-slate-900 dark:text-white">{doc.title}</h3>
-              <p className="text-sm leading-6 text-slate-600 dark:text-slate-300 line-clamp-3">{doc.content}</p>
+              <h3 className="mb-2 text-lg font-semibold text-slate-900 dark:text-white">
+                {doc.title}
+              </h3>
+              <p className="text-sm leading-6 text-slate-600 dark:text-slate-300 line-clamp-3">
+                {doc.content}
+              </p>
             </div>
 
             <div className="flex items-center justify-between border-t border-slate-200/80 p-3 dark:border-slate-800/80">
@@ -282,8 +288,12 @@ export default function TrashPage() {
       {trashedDocuments.length === 0 && (
         <div className="rounded-[24px] border border-dashed border-slate-200 bg-slate-50/70 p-12 text-center dark:border-slate-800/80 dark:bg-slate-950/40">
           <FiTrash2 className="mx-auto h-10 w-10 text-slate-400" />
-          <h3 className="mt-2 text-lg font-medium text-slate-700 dark:text-slate-300">Trash is empty</h3>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">No documents in trash.</p>
+          <h3 className="mt-2 text-lg font-medium text-slate-700 dark:text-slate-300">
+            Trash is empty
+          </h3>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+            No documents in trash.
+          </p>
         </div>
       )}
 
@@ -297,7 +307,9 @@ export default function TrashPage() {
               className="flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-[24px] border border-slate-200/80 bg-white shadow-2xl dark:border-slate-800/80 dark:bg-slate-900"
             >
               <div className="flex items-center justify-between border-b border-slate-200/80 p-4 dark:border-slate-800/80">
-                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">{selectedDocument.title}</h2>
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
+                  {selectedDocument.title}
+                </h2>
                 <button
                   onClick={closeModal}
                   className="rounded-2xl border border-slate-200 bg-slate-50 p-2 text-slate-700 transition hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"

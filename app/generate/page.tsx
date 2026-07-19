@@ -24,16 +24,21 @@ export default function GeneratePage() {
         </div>
 
         <div className="rounded-[24px] border border-slate-200/80 bg-slate-50/80 p-5 shadow-sm dark:border-slate-800/80 dark:bg-slate-950/60">
-          <h3 className="text-base font-semibold text-slate-900 dark:text-white">Helpful prompts</h3>
+          <h3 className="text-base font-semibold text-slate-900 dark:text-white">
+            Helpful prompts
+          </h3>
           <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-600 dark:text-slate-300">
             <li className="rounded-2xl border border-slate-200/80 bg-white/80 p-3 dark:border-slate-800/80 dark:bg-slate-900/70">
-              Use a clear topic like “launch plan for a new product” to sharpen the response.
+              Use a clear topic like “launch plan for a new product” to sharpen the
+              response.
             </li>
             <li className="rounded-2xl border border-slate-200/80 bg-white/80 p-3 dark:border-slate-800/80 dark:bg-slate-900/70">
-              Choose a tone that matches the audience, then add details for more precise output.
+              Choose a tone that matches the audience, then add details for more precise
+              output.
             </li>
             <li className="rounded-2xl border border-slate-200/80 bg-white/80 p-3 dark:border-slate-800/80 dark:bg-slate-900/70">
-              Short revisions often create the strongest results for emails and social posts.
+              Short revisions often create the strongest results for emails and social
+              posts.
             </li>
           </ul>
         </div>

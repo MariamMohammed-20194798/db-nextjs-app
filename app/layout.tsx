@@ -5,7 +5,8 @@ import { ThemeProvider } from './utils/ThemeContext';
 
 export const metadata: Metadata = {
   title: 'DocuBrain',
-  description: 'A polished AI workspace for translating, summarizing, generating content, and chatting with your documents.',
+  description:
+    'A polished AI workspace for translating, summarizing, generating content, and chatting with your documents.',
 };
 
 function SystemThemeInitializer() {

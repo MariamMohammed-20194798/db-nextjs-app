@@ -44,7 +44,9 @@ export default function Sidebar({ mobile = false, onClose }: SidebarProps) {
           </div>
           {!mobile && !isCollapsed ? (
             <div>
-              <p className="text-base font-semibold text-slate-900 dark:text-white">DocuBrain</p>
+              <p className="text-base font-semibold text-slate-900 dark:text-white">
+                DocuBrain
+              </p>
               <p className="text-xs text-slate-500 dark:text-slate-400">AI workspace</p>
             </div>
           ) : null}
@@ -56,7 +58,11 @@ export default function Sidebar({ mobile = false, onClose }: SidebarProps) {
             className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 text-slate-700 transition hover:border-slate-300 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
             aria-label={isCollapsed ? 'Expand navigation' : 'Collapse navigation'}
           >
-            {isCollapsed ? <IoChevronForwardOutline className="h-4 w-4" /> : <IoChevronBackOutline className="h-4 w-4" />}
+            {isCollapsed ? (
+              <IoChevronForwardOutline className="h-4 w-4" />
+            ) : (
+              <IoChevronBackOutline className="h-4 w-4" />
+            )}
           </button>
         ) : null}
       </div>
@@ -76,7 +82,7 @@ export default function Sidebar({ mobile = false, onClose }: SidebarProps) {
               } ${isCollapsed && !mobile ? 'justify-center px-2' : ''}`}
             >
               <Icon className="h-5 w-5 shrink-0" />
-              {(!isCollapsed || mobile) ? <span className="truncate">{label}</span> : null}
+              {!isCollapsed || mobile ? <span className="truncate">{label}</span> : null}
             </Link>
           );
         })}
@@ -85,7 +91,9 @@ export default function Sidebar({ mobile = false, onClose }: SidebarProps) {
   );
 
   if (mobile) {
-    return <aside className="flex h-full w-full flex-col overflow-y-auto p-4">{content}</aside>;
+    return (
+      <aside className="flex h-full w-full flex-col overflow-y-auto p-4">{content}</aside>
+    );
   }
 
   return (

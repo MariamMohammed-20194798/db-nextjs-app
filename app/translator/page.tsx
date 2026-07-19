@@ -16,7 +16,7 @@ export default function TranslatorPage() {
   const [targetLanguageLabel, setTargetLanguageLabel] = useState('Arabic');
   const [isTranslating, setIsTranslating] = useState(false);
   const [translationTimeout, setTranslationTimeout] = useState<NodeJS.Timeout | null>(
-    null
+    null,
   );
   const [savingToHistory, setSavingToHistory] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -249,7 +249,9 @@ export default function TranslatorPage() {
         } catch (error) {
           console.error('Translation error:', error);
           setError(
-            error instanceof Error ? error.message : 'Translation failed. Please try again.'
+            error instanceof Error
+              ? error.message
+              : 'Translation failed. Please try again.',
           );
         } finally {
           setIsTranslating(false);
@@ -258,7 +260,7 @@ export default function TranslatorPage() {
 
       setTranslationTimeout(timeout);
     },
-    [sourceLanguage, targetLanguage]
+    [sourceLanguage, targetLanguage],
   );
 
   // Auto-translate when text, source language, or target language changes
@@ -363,7 +365,7 @@ export default function TranslatorPage() {
     } catch (err) {
       console.error('Error saving to history:', err);
       setError(
-        err instanceof Error ? err.message : 'An error occurred while saving to history'
+        err instanceof Error ? err.message : 'An error occurred while saving to history',
       );
     } finally {
       setSavingToHistory(false);
@@ -802,15 +804,15 @@ export default function TranslatorPage() {
                   saveSuccess
                     ? 'bg-blue-500 dark:bg-blue-400 text-white cursor-default'
                     : savingToHistory
-                    ? 'bg-gray-400 text-white cursor-wait'
-                    : 'bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white'
+                      ? 'bg-gray-400 text-white cursor-wait'
+                      : 'bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white'
                 }`}
               >
                 {saveSuccess
                   ? 'Saved to History! 🎉'
                   : savingToHistory
-                  ? 'Saving...'
-                  : 'Save to History'}
+                    ? 'Saving...'
+                    : 'Save to History'}
               </button>
             </>
           )}

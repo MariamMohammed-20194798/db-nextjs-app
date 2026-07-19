@@ -99,11 +99,23 @@ export default function VersionHistoryPage() {
       return 'Generate';
     }
 
-    if (title.includes('summarize') || title.includes('summary') || title.includes('summarized')) {
+    if (
+      title.includes('summarize') ||
+      title.includes('summary') ||
+      title.includes('summarized')
+    ) {
       return 'Summarize';
-    } else if (title.includes('translate') || title.includes('translator') || title.includes('translation')) {
+    } else if (
+      title.includes('translate') ||
+      title.includes('translator') ||
+      title.includes('translation')
+    ) {
       return 'Translator';
-    } else if (title.includes('generate') || title.includes('created') || title.includes('creation')) {
+    } else if (
+      title.includes('generate') ||
+      title.includes('created') ||
+      title.includes('creation')
+    ) {
       return 'Generate';
     }
 
@@ -198,7 +210,7 @@ export default function VersionHistoryPage() {
           if (storedDocuments) {
             const parsedDocuments = JSON.parse(storedDocuments);
             const updatedDocuments = parsedDocuments.filter(
-              (doc: VersionDocument) => doc.id !== id
+              (doc: VersionDocument) => doc.id !== id,
             );
             localStorage.setItem('documents', JSON.stringify(updatedDocuments));
           }
@@ -414,15 +426,16 @@ export default function VersionHistoryPage() {
                 <div className="mb-4 flex flex-wrap items-center justify-between gap-2 text-sm text-slate-500 dark:text-slate-400">
                   <span>{selectedDocument?.date}</span>
                   <div className="flex items-center gap-2">
-                    {selectedDocument && detectDocumentType(selectedDocument) !== 'Other' && (
-                      <span
-                        className={`rounded-full px-2.5 py-1 text-xs font-medium text-white ${getTypeBadgeColor(
-                          detectDocumentType(selectedDocument)
-                        )}`}
-                      >
-                        {detectDocumentType(selectedDocument)}
-                      </span>
-                    )}
+                    {selectedDocument &&
+                      detectDocumentType(selectedDocument) !== 'Other' && (
+                        <span
+                          className={`rounded-full px-2.5 py-1 text-xs font-medium text-white ${getTypeBadgeColor(
+                            detectDocumentType(selectedDocument),
+                          )}`}
+                        >
+                          {detectDocumentType(selectedDocument)}
+                        </span>
+                      )}
                     <span>{selectedDocument?.wordCount} words</span>
                   </div>
                 </div>

@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { Suspense, useState, useEffect } from 'react';
 import { IoMdChatbubbles } from 'react-icons/io';

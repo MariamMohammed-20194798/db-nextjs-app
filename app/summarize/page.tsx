@@ -61,7 +61,9 @@ export default function Home() {
         </div>
 
         <div className="mt-4 rounded-[20px] border border-slate-200/80 bg-slate-50/70 p-3 dark:border-slate-800/80 dark:bg-slate-950/40 sm:p-4">
-          <p className="text-sm leading-6 text-slate-600 dark:text-slate-300">{sources[selectedSourceIndex].description}</p>
+          <p className="text-sm leading-6 text-slate-600 dark:text-slate-300">
+            {sources[selectedSourceIndex].description}
+          </p>
         </div>
 
         <div className="mt-6">

@@ -15,7 +15,8 @@ const modules = [
   {
     href: '/translator',
     title: 'Translator',
-    description: 'Translate content between languages with instant previews and audio playback.',
+    description:
+      'Translate content between languages with instant previews and audio playback.',
     icon: IoLanguageOutline,
   },
   {
@@ -33,13 +34,15 @@ const modules = [
   {
     href: '/chatbot',
     title: 'AI Chatbot',
-    description: 'Ask questions, compare ideas, and explore your saved content in a guided chat.',
+    description:
+      'Ask questions, compare ideas, and explore your saved content in a guided chat.',
     icon: IoMdChatbubbles,
   },
   {
     href: '/version-history',
     title: 'Version History',
-    description: 'Manage saved assets and revisit recent content without leaving the workspace.',
+    description:
+      'Manage saved assets and revisit recent content without leaving the workspace.',
     icon: IoTimerOutline,
   },
 ];
@@ -63,7 +66,8 @@ export default function Home() {
                   Welcome to DocuBrain
                 </h1>
                 <p className="mt-1 text-sm leading-6 text-slate-600 dark:text-slate-300 sm:text-base">
-                  Work through content translation, summarization, generation, and chat experiences from a single polished dashboard.
+                  Work through content translation, summarization, generation, and chat
+                  experiences from a single polished dashboard.
                 </p>
               </div>
             </div>
@@ -72,11 +76,17 @@ export default function Home() {
           <div className="grid gap-3 sm:grid-cols-2 lg:min-w-[280px]">
             <div className="rounded-2xl border border-slate-200/80 bg-white/80 p-4 shadow-sm dark:border-slate-800/80 dark:bg-slate-900/80">
               <p className="text-2xl font-semibold text-slate-900 dark:text-white">5</p>
-              <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">AI-powered tools</p>
+              <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+                AI-powered tools
+              </p>
             </div>
             <div className="rounded-2xl border border-slate-200/80 bg-white/80 p-4 shadow-sm dark:border-slate-800/80 dark:bg-slate-900/80">
-              <p className="text-2xl font-semibold text-slate-900 dark:text-white">100%</p>
-              <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Responsive layout</p>
+              <p className="text-2xl font-semibold text-slate-900 dark:text-white">
+                100%
+              </p>
+              <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+                Responsive layout
+              </p>
             </div>
           </div>
         </div>
@@ -93,9 +103,13 @@ export default function Home() {
               <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-50 text-sky-600 transition group-hover:bg-sky-100 dark:bg-slate-800 dark:text-sky-300 dark:group-hover:bg-slate-700">
                 <Icon className="h-5 w-5" />
               </div>
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-white">{title}</h2>
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
+                {title}
+              </h2>
             </div>
-            <p className="mt-4 text-sm leading-6 text-slate-600 dark:text-slate-300">{description}</p>
+            <p className="mt-4 text-sm leading-6 text-slate-600 dark:text-slate-300">
+              {description}
+            </p>
           </Link>
         ))}
       </div>
