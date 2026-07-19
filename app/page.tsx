@@ -7,87 +7,98 @@ import {
   IoDocumentTextOutline,
   IoCreateOutline,
   IoTimerOutline,
+  IoSparkles,
 } from 'react-icons/io5';
 import { IoMdChatbubbles } from 'react-icons/io';
 
+const modules = [
+  {
+    href: '/translator',
+    title: 'Translator',
+    description: 'Translate content between languages with instant previews and audio playback.',
+    icon: IoLanguageOutline,
+  },
+  {
+    href: '/summarize',
+    title: 'Summarize',
+    description: 'Turn long text, PDFs, or URLs into concise summaries with one tap.',
+    icon: IoDocumentTextOutline,
+  },
+  {
+    href: '/generate',
+    title: 'Content Generator',
+    description: 'Create polished emails, reports, blogs, and social posts in seconds.',
+    icon: IoCreateOutline,
+  },
+  {
+    href: '/chatbot',
+    title: 'AI Chatbot',
+    description: 'Ask questions, compare ideas, and explore your saved content in a guided chat.',
+    icon: IoMdChatbubbles,
+  },
+  {
+    href: '/version-history',
+    title: 'Version History',
+    description: 'Manage saved assets and revisit recent content without leaving the workspace.',
+    icon: IoTimerOutline,
+  },
+];
+
 export default function Home() {
   return (
-    <div className="h-full max-w-7xl mx-auto bg-gray-50 dark:bg-gray-900 flex flex-col rounded-lg">
-      <main className="flex-1 p-6 md:p-12">
-        <div className="flex items-center justify-center gap-3 mb-8">
-          <IoBulb className="w-10 h-10 text-blue-500 animate-pulse" />
-          <h1 className="text-3xl text-center font-bold text-blue-500 animate-pulse">
-            Welcome to DocuBrain
-          </h1>
+    <div className="space-y-6">
+      <section className="rounded-[28px] border border-slate-200/80 bg-gradient-to-br from-sky-500/10 via-white/80 to-indigo-500/10 p-6 shadow-[0_25px_70px_-28px_rgba(15,23,42,0.45)] dark:border-slate-800/80 dark:from-sky-500/15 dark:via-slate-900/80 dark:to-indigo-500/10 sm:p-8">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-2xl">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-sky-200 bg-white/80 px-3 py-1 text-sm font-medium text-sky-700 dark:border-sky-500/30 dark:bg-slate-800/80 dark:text-sky-300">
+              <IoSparkles className="h-4 w-4" />
+              Refined for every screen size
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-500 via-blue-600 to-indigo-600 text-white shadow-lg shadow-sky-500/20">
+                <IoBulb className="h-7 w-7" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white sm:text-3xl">
+                  Welcome to DocuBrain
+                </h1>
+                <p className="mt-1 text-sm leading-6 text-slate-600 dark:text-slate-300 sm:text-base">
+                  Work through content translation, summarization, generation, and chat experiences from a single polished dashboard.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2 lg:min-w-[280px]">
+            <div className="rounded-2xl border border-slate-200/80 bg-white/80 p-4 shadow-sm dark:border-slate-800/80 dark:bg-slate-900/80">
+              <p className="text-2xl font-semibold text-slate-900 dark:text-white">5</p>
+              <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">AI-powered tools</p>
+            </div>
+            <div className="rounded-2xl border border-slate-200/80 bg-white/80 p-4 shadow-sm dark:border-slate-800/80 dark:bg-slate-900/80">
+              <p className="text-2xl font-semibold text-slate-900 dark:text-white">100%</p>
+              <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Responsive layout</p>
+            </div>
+          </div>
         </div>
+      </section>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        {modules.map(({ href, title, description, icon: Icon }) => (
           <Link
-            href="/translator"
-            className="block p-6 bg-white dark:bg-gray-800 rounded-lg hover:scale-105 transition-all duration-300 border-2 border-blue-400"
+            key={href}
+            href={href}
+            className="group rounded-[24px] border border-slate-200/80 bg-white/90 p-5 shadow-[0_18px_44px_-28px_rgba(15,23,42,0.45)] transition-all duration-200 hover:-translate-y-1 hover:border-sky-300 hover:shadow-[0_24px_48px_-22px_rgba(59,130,246,0.45)] dark:border-slate-800/80 dark:bg-slate-900/80"
           >
-            <h2 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white flex items-center gap-2">
-              <IoLanguageOutline className="text-blue-400" />
-              Translator
-            </h2>
-            <p className="text-gray-600 dark:text-gray-300">
-              Translate Your Text Between Languages.
-            </p>
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-50 text-sky-600 transition group-hover:bg-sky-100 dark:bg-slate-800 dark:text-sky-300 dark:group-hover:bg-slate-700">
+                <Icon className="h-5 w-5" />
+              </div>
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-white">{title}</h2>
+            </div>
+            <p className="mt-4 text-sm leading-6 text-slate-600 dark:text-slate-300">{description}</p>
           </Link>
-
-          <Link
-            href="/summarize"
-            className="block p-6 bg-white dark:bg-gray-800 rounded-lg hover:scale-105 transition-all duration-300 border-2 border-blue-400"
-          >
-            <h2 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white flex items-center gap-2">
-              <IoDocumentTextOutline className="text-blue-400" />
-              Summarize
-            </h2>
-            <p className="text-gray-600 dark:text-gray-300">
-              Generate concise summaries for your text, documents, and urls.
-            </p>
-          </Link>
-
-          <Link
-            href="/generate"
-            className="block p-6 bg-white dark:bg-gray-800 rounded-lg hover:scale-105 transition-all duration-300 border-2 border-blue-400"
-          >
-            <h2 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white flex items-center gap-2">
-              <IoCreateOutline className="text-blue-400" />
-              Content Generator
-            </h2>
-            <p className="text-gray-600 dark:text-gray-300">
-              Create professional emails, reports, blog posts, and more.
-            </p>
-          </Link>
-
-          <Link
-            href="/chatbot"
-            className="block p-6 bg-white dark:bg-gray-800 rounded-lg hover:scale-105 transition-all duration-300 border-2 border-blue-400"
-          >
-            <h2 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white flex items-center gap-2">
-              <IoMdChatbubbles className="text-blue-400" />
-              AI Chatbot
-            </h2>
-            <p className="text-gray-600 dark:text-gray-300">
-              Chat with your documents and get instant answers to your questions.
-            </p>
-          </Link>
-
-          <Link
-            href="/version-history"
-            className="block p-6 bg-white dark:bg-gray-800 rounded-lg hover:scale-105 transition-all duration-300 border-2 border-blue-400"
-          >
-            <h2 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white flex items-center gap-2">
-              <IoTimerOutline className="text-blue-400" />
-              Version History
-            </h2>
-            <p className="text-gray-600 dark:text-gray-300">
-              Track changes to your documents over time and restore previous versions.
-            </p>
-          </Link>
-        </div>
-      </main>
+        ))}
+      </div>
     </div>
   );
 }

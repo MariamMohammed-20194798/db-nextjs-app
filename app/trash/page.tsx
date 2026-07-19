@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { FiTrash2, FiX } from 'react-icons/fi';
+import { FiTrash2 } from 'react-icons/fi';
 import { MdRestore } from 'react-icons/md';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -30,8 +30,6 @@ export default function TrashPage() {
   const fetchTrashedDocuments = async () => {
     try {
       setIsLoading(true);
-
-      // Get trashed documents from API
       const response = await fetch('/api/trash');
       let apiTrashedDocuments: TrashedDocument[] = [];
 
@@ -42,28 +40,22 @@ export default function TrashPage() {
         console.error('Failed to fetch trashed documents:', await response.text());
       }
 
-      // Get trashed documents from localStorage
       let localTrashedDocuments: TrashedDocument[] = [];
       try {
         const storedTrashedDocs = localStorage.getItem('trashedDocuments');
         if (storedTrashedDocs) {
           localTrashedDocuments = JSON.parse(storedTrashedDocs);
-
-          // Filter out expired documents (older than 24 hours)
           const now = Date.now();
           const twentyFourHoursInMs = 24 * 60 * 60 * 1000;
           localTrashedDocuments = localTrashedDocuments.filter(
             (doc) => doc.trashedAt && now - doc.trashedAt < twentyFourHoursInMs
           );
-
-          // Update localStorage with filtered documents
           localStorage.setItem('trashedDocuments', JSON.stringify(localTrashedDocuments));
         }
       } catch (error) {
         console.error('Error parsing localStorage trashed documents:', error);
       }
 
-      // Combine and deduplicate trashed documents by ID
       const allTrashedDocs = [...localTrashedDocuments, ...apiTrashedDocuments];
       const uniqueTrashedDocsMap = new Map();
 
@@ -73,12 +65,8 @@ export default function TrashPage() {
         }
       });
 
-      // Convert map back to array and sort by trashed date (newest first)
       const uniqueTrashedDocs = Array.from(uniqueTrashedDocsMap.values());
-      uniqueTrashedDocs.sort((a, b) => {
-        return (b.trashedAt || 0) - (a.trashedAt || 0);
-      });
-
+      uniqueTrashedDocs.sort((a, b) => (b.trashedAt || 0) - (a.trashedAt || 0));
       setTrashedDocuments(uniqueTrashedDocs);
     } catch (error) {
       console.error('Error fetching trashed documents:', error);
@@ -92,7 +80,6 @@ export default function TrashPage() {
     fetchTrashedDocuments();
   }, []);
 
-  // Auto-hide success message after 3 seconds
   useEffect(() => {
     if (successMessage) {
       const timer = setTimeout(() => {
@@ -110,16 +97,13 @@ export default function TrashPage() {
         throw new Error('Document not found in trash');
       }
 
-      // Restore via API
       const restoreResponse = await fetch(`/api/trash?id=${id}`, {
         method: 'PUT',
       });
 
       if (restoreResponse.ok) {
-        // Update UI: remove from trash
         setTrashedDocuments(trashedDocuments.filter((doc) => doc.id !== id));
 
-        // Update localStorage: remove from trash
         try {
           const storedTrashedDocs = localStorage.getItem('trashedDocuments');
           if (storedTrashedDocs) {
@@ -133,7 +117,6 @@ export default function TrashPage() {
           console.error('Error updating localStorage trash:', error);
         }
 
-        // Update localStorage: add to active documents
         try {
           const { trashedAt, ...restoredDocument } = documentToRestore;
           const storedDocuments = localStorage.getItem('documents') || '[]';
@@ -144,7 +127,6 @@ export default function TrashPage() {
           console.error('Error updating localStorage documents:', error);
         }
 
-        // Show success message
         setSuccessMessage({
           text: `Document ID: ${documentToRestore.id} restored successfully.`,
           type: 'success',
@@ -167,11 +149,8 @@ export default function TrashPage() {
 
   const handlePermanentDelete = async (id: string) => {
     try {
-      // Get document title before deleting
       const documentToDelete = trashedDocuments.find((doc) => doc.id === id);
-      const documentTitle = documentToDelete?.title || 'Document';
 
-      // Update localStorage first
       try {
         const storedTrashedDocs = localStorage.getItem('trashedDocuments');
         if (storedTrashedDocs) {
@@ -185,22 +164,18 @@ export default function TrashPage() {
         console.error('Error updating localStorage trash:', error);
       }
 
-      // Delete from API trash
       const response = await fetch(`/api/trash?id=${id}`, {
         method: 'DELETE',
       });
 
-      // Update UI regardless of API response
       setTrashedDocuments(trashedDocuments.filter((doc) => doc.id !== id));
 
-      // Show success message
       setSuccessMessage({
         text: `Document ID: ${documentToDelete?.id} permanently deleted.`,
         type: 'success',
       });
 
       if (!response.ok) {
-        // Log the error but don't show to user since we've already removed it from localStorage
         console.error('API delete failed:', await response.text());
       }
     } catch (error) {
@@ -224,90 +199,79 @@ export default function TrashPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center mt-50">
-        <AiOutlineLoading3Quarters className="animate-spin text-gray-400 w-8 h-8" />
+      <div className="mt-50 flex items-center justify-center">
+        <AiOutlineLoading3Quarters className="h-8 w-8 animate-spin text-slate-400" />
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="mx-auto max-w-6xl space-y-6">
       <HeaderSection
         inline
-        className={'mb-5'}
-        title={'Trash'}
-        desc={'Documents will be permanently deleted after 24 hours.'}
-        icon={<FiTrash2 className="w-10 h-10" />}
-        key={'trash-header'}
+        className="mb-2"
+        title="Trash"
+        desc="Recover or remove files before they are permanently deleted after 24 hours."
+        icon={<FiTrash2 className="h-7 w-7" />}
+        key="trash-header"
       />
 
-      {/* Success/Error Message Toast */}
       {successMessage && (
         <div
-          className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm transition-opacity duration-300 ${
+          className={`fixed right-4 top-4 z-50 max-w-sm rounded-2xl border p-4 shadow-lg transition-opacity duration-300 ${
             successMessage.type === 'success'
-              ? 'bg-green-100 border-l-4 border-green-500 text-green-700'
-              : 'bg-red-100 border-l-4 border-red-500 text-red-700'
+              ? 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900/40 dark:bg-emerald-950/40 dark:text-emerald-300'
+              : 'border-red-200 bg-red-50 text-red-700 dark:border-red-900/40 dark:bg-red-950/40 dark:text-red-300'
           }`}
         >
-          <div className="flex items-center">
-            <div className="py-1">
-              <p className="font-medium">{successMessage.text}</p>
-            </div>
-          </div>
+          <p className="font-medium">{successMessage.text}</p>
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {trashedDocuments.map((doc) => (
           <motion.div
             key={doc.id}
-            className="bg-white dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-500 rounded-md overflow-hidden hover:outline-none hover:ring-2 hover:ring-blue-500 overflow-hidden cursor-pointer shadow-sm hover:shadow-md"
+            className="cursor-pointer overflow-hidden rounded-[24px] border border-slate-200/80 bg-white/90 shadow-[0_16px_44px_-28px_rgba(15,23,42,0.45)] transition hover:-translate-y-1 hover:shadow-[0_24px_48px_-22px_rgba(59,130,246,0.45)] dark:border-slate-800/80 dark:bg-slate-900/80"
             whileHover={{ y: -5, transition: { duration: 0.2 } }}
             onClick={() => openDocumentModal(doc)}
           >
             <div className="p-4">
-              <div className="flex justify-between items-center mb-1">
-                <div className="text-xs text-gray-500 dark:text-gray-500">{doc.date}</div>
-                <div className="text-xs text-red-500 dark:text-red-400">
-                  Expires in{' '}
-                  {Math.ceil(24 - (Date.now() - (doc.trashedAt || 0)) / (60 * 60 * 1000))}{' '}
-                  hours
-                </div>
+              <div className="mb-2 flex items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400">
+                <span>{doc.date}</span>
+                <span className="rounded-full bg-red-50 px-2 py-1 text-[11px] text-red-600 dark:bg-red-950/40 dark:text-red-300">
+                  Expires in {Math.ceil(24 - (Date.now() - (doc.trashedAt || 0)) / (60 * 60 * 1000))}h
+                </span>
               </div>
-              <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-white">
-                {doc.title}
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3">
-                {doc.content}
-              </p>
+              <h3 className="mb-2 text-lg font-semibold text-slate-900 dark:text-white">{doc.title}</h3>
+              <p className="text-sm leading-6 text-slate-600 dark:text-slate-300 line-clamp-3">{doc.content}</p>
             </div>
 
-            <div className="flex items-center justify-between p-2 border-t border-gray-200 dark:border-gray-600">
-              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-red-100 text-red-500">
-                <span>{doc.wordCount}</span>
+            <div className="flex items-center justify-between border-t border-slate-200/80 p-3 dark:border-slate-800/80">
+              <div className="rounded-full bg-slate-100 px-3 py-2 text-sm font-medium text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+                {doc.wordCount}
               </div>
 
-              <div className="flex space-x-2">
+              <div className="flex gap-2">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     handleRestoreFromTrash(doc.id);
                   }}
-                  className="p-2 text-gray-600 dark:text-gray-500 hover:text-blue-500"
+                  className="rounded-2xl border border-slate-200 bg-slate-50 p-2 text-slate-700 transition hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
                   title="Restore from trash"
                 >
-                  <MdRestore className="w-5 h-5" />
+                  <MdRestore className="h-4 w-4" />
                 </button>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     handlePermanentDelete(doc.id);
                   }}
-                  className="p-2 text-gray-600 dark:text-gray-500 hover:text-blue-500"
+                  className="rounded-2xl border border-red-200 bg-red-50 p-2 text-red-600 transition hover:bg-red-100 dark:border-red-900/40 dark:bg-red-950/40 dark:text-red-300"
                   title="Delete permanently"
                 >
-                  <FiTrash2 className="w-4 h-4" />
+                  <FiTrash2 className="h-4 w-4" />
                 </button>
               </div>
             </div>
@@ -316,36 +280,31 @@ export default function TrashPage() {
       </div>
 
       {trashedDocuments.length === 0 && (
-        <div className="text-center py-50">
-          <FiTrash2 className="mx-auto h-10 w-10 text-gray-400" />
-          <h3 className="mt-2 text-lg font-medium text-gray-600 dark:text-gray-400">
-            Trash is empty
-          </h3>
-          <p className="mt-1 text-sm text-gray-500">No documents in trash.</p>
+        <div className="rounded-[24px] border border-dashed border-slate-200 bg-slate-50/70 p-12 text-center dark:border-slate-800/80 dark:bg-slate-950/40">
+          <FiTrash2 className="mx-auto h-10 w-10 text-slate-400" />
+          <h3 className="mt-2 text-lg font-medium text-slate-700 dark:text-slate-300">Trash is empty</h3>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">No documents in trash.</p>
         </div>
       )}
 
-      {/* Document Modal */}
       <AnimatePresence>
         {isModalOpen && selectedDocument && (
-          <div className="fixed inset-0 backdrop-blur-md bg-black/30 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/55 p-4 backdrop-blur-sm">
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] flex flex-col overflow-hidden"
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-[24px] border border-slate-200/80 bg-white shadow-2xl dark:border-slate-800/80 dark:bg-slate-900"
             >
-              <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-                <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
-                  {selectedDocument.title}
-                </h2>
+              <div className="flex items-center justify-between border-b border-slate-200/80 p-4 dark:border-slate-800/80">
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">{selectedDocument.title}</h2>
                 <button
                   onClick={closeModal}
-                  className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+                  className="rounded-2xl border border-slate-200 bg-slate-50 p-2 text-slate-700 transition hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6"
+                    className="h-5 w-5"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -360,25 +319,25 @@ export default function TrashPage() {
                 </button>
               </div>
 
-              <div className="p-4 overflow-y-auto flex-grow">
-                <div className="mb-4 flex justify-between text-sm text-gray-400">
+              <div className="flex-grow overflow-y-auto p-4">
+                <div className="mb-4 flex flex-wrap items-center justify-between gap-2 text-sm text-slate-500 dark:text-slate-400">
                   <span>{selectedDocument.date}</span>
                   <span>{selectedDocument.wordCount} words</span>
                 </div>
-                <div className="p-4 rounded-md whitespace-pre-wrap text-gray-800 dark:text-gray-200">
+                <div className="whitespace-pre-wrap rounded-[20px] border border-slate-200 bg-slate-50 p-4 text-sm leading-7 text-slate-700 dark:border-slate-800 dark:bg-slate-950/50 dark:text-slate-200">
                   {selectedDocument.content}
                 </div>
               </div>
 
-              <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-end space-x-3">
+              <div className="flex flex-wrap justify-end gap-3 border-t border-slate-200/80 p-4 dark:border-slate-800/80">
                 <button
                   onClick={() => {
                     handleRestoreFromTrash(selectedDocument.id);
                     closeModal();
                   }}
-                  className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                  className="min-h-11 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
                 >
-                  <MdRestore className="w-4 h-4 mr-2 inline" />
+                  <MdRestore className="mr-2 inline h-4 w-4" />
                   Restore
                 </button>
                 <button
@@ -386,9 +345,9 @@ export default function TrashPage() {
                     handlePermanentDelete(selectedDocument.id);
                     closeModal();
                   }}
-                  className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded text-white transition-colors"
+                  className="min-h-11 rounded-2xl bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700"
                 >
-                  <FiTrash2 className="w-4 h-4 mr-2 inline" />
+                  <FiTrash2 className="mr-2 inline h-4 w-4" />
                   Delete Permanently
                 </button>
               </div>

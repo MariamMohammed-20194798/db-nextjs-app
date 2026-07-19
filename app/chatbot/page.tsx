@@ -24,7 +24,6 @@ function ChatbotPageContent() {
   const [selectedDocId, setSelectedDocId] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Format date to a readable format
   const formatDate = (dateString?: string) => {
     if (!dateString) return '';
     const date = new Date(dateString);
@@ -35,13 +34,11 @@ function ChatbotPageContent() {
     });
   };
 
-  // Fetch user's documents and summaries
   useEffect(() => {
     const fetchDocuments = async () => {
       setIsLoading(true);
 
       try {
-        // Fetch documents from the API
         const response = await fetch('/api/documents');
         const data = await response.json();
 
@@ -56,7 +53,6 @@ function ChatbotPageContent() {
         setIsLoading(false);
       }
 
-      // Set selected document from URL if provided
       if (urlDocumentId) {
         setSelectedDocId(urlDocumentId);
       }
@@ -66,63 +62,58 @@ function ChatbotPageContent() {
   }, [urlDocumentId]);
 
   return (
-    <div className="max-w-6xl mx-auto">
-      <motion.div
-        layout
-        className="flex-shrink-0 w-full flex justify-between gap-10 mb-6"
-      >
-        <HeaderSection
-          inline
-          className={'mb-5'}
-          title="AI Chatbot"
-          desc="Ask questions about your documents and summaries"
-          icon={<IoMdChatbubbles className="w-10 h-10" />}
-          key={'chatbot-header'}
-        />
-      </motion.div>
+    <div className="mx-auto max-w-6xl space-y-6">
+      <HeaderSection
+        inline
+        className="mb-2"
+        title="AI Chatbot"
+        desc="Ask questions about your documents and summaries from a streamlined, mobile-friendly chat workspace."
+        icon={<IoMdChatbubbles className="h-7 w-7" />}
+        key="chatbot-header"
+      />
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        <div className="lg:col-span-1 bg-white dark:bg-gray-500 p-2 rounded-lg shadow h-[calc(85vh-80px)] flex flex-col">
-          <h3 className="text-lg font-bold mb-4 text-gray-900 dark:text-white">
+      <div className="grid gap-4 xl:grid-cols-[320px_minmax(0,1fr)]">
+        <div className="flex h-[calc(85vh-80px)] min-h-[320px] flex-col rounded-[24px] border border-slate-200/80 bg-white/90 p-3 shadow-[0_16px_44px_-28px_rgba(15,23,42,0.45)] dark:border-slate-800/80 dark:bg-slate-900/80">
+          <h3 className="mb-3 px-2 text-lg font-semibold text-slate-900 dark:text-white">
             Your Content
           </h3>
 
           {isLoading ? (
-            <div className="flex justify-center items-center h-40">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+            <div className="flex h-40 items-center justify-center">
+              <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-sky-500"></div>
             </div>
           ) : (
             <div
-              className="flex-1 overflow-y-auto"
+              className="flex-1 overflow-y-auto pr-1"
               style={{
                 scrollbarWidth: 'thin',
                 scrollbarColor: 'rgba(156, 156, 156, 0.3) transparent',
               }}
             >
               {documents.length === 0 ? (
-                <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                <div className="rounded-[20px] border border-dashed border-slate-200 bg-slate-50/70 p-6 text-center text-sm text-slate-500 dark:border-slate-700 dark:bg-slate-950/40 dark:text-slate-400">
                   <p>No documents found.</p>
-                  <p className="mt-2 text-sm">Upload or summarize content first.</p>
+                  <p className="mt-2">Upload or summarize content first.</p>
                 </div>
               ) : (
                 <div className="space-y-2">
                   {documents.map((doc) => (
-                    <div
+                    <button
                       key={doc.id}
                       onClick={() => setSelectedDocId(doc.id)}
-                      className={`p-2 rounded-xl cursor-pointer ${
+                      className={`w-full rounded-[18px] border p-3 text-left transition ${
                         selectedDocId === doc.id
-                          ? 'dark:bg-blue-900 border-4 border-blue-500'
-                          : 'bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600'
+                          ? 'border-sky-500 bg-sky-50 text-sky-700 dark:border-sky-400 dark:bg-sky-500/10 dark:text-sky-300'
+                          : 'border-transparent bg-slate-50 hover:border-slate-200 hover:bg-slate-100 dark:bg-slate-800/70 dark:hover:border-slate-700 dark:hover:bg-slate-800'
                       }`}
                     >
-                      <div className="font-medium mb-1 text-gray-900 dark:text-white">
+                      <div className="mb-1 font-medium text-slate-900 dark:text-white">
                         {doc.title}
                       </div>
-                      <div className="flex text-xs text-gray-500 dark:text-gray-400">
+                      <div className="text-xs text-slate-500 dark:text-slate-400">
                         {doc.created_at && <span>{formatDate(doc.created_at)}</span>}
                       </div>
-                    </div>
+                    </button>
                   ))}
                 </div>
               )}
@@ -130,11 +121,11 @@ function ChatbotPageContent() {
           )}
         </div>
 
-        <div className="lg:col-span-3 bg-white dark:bg-gray-800 rounded-lg shadow flex flex-col h-[calc(85vh-80px)]">
+        <div className="flex h-[calc(85vh-80px)] min-h-[320px] flex-col overflow-hidden rounded-[24px] border border-slate-200/80 bg-white/90 shadow-[0_16px_44px_-28px_rgba(15,23,42,0.45)] dark:border-slate-800/80 dark:bg-slate-900/80">
           {!selectedDocId ? (
-            <div className="flex-1 flex flex-col items-center justify-center p-6 text-center text-gray-500 dark:text-gray-400">
-              <IoMdChatbubbles className="w-16 h-16 mb-4 opacity-50" />
-              <h3 className="text-xl font-medium mb-2">
+            <div className="flex flex-1 flex-col items-center justify-center p-6 text-center text-slate-500 dark:text-slate-400">
+              <IoMdChatbubbles className="mb-4 h-16 w-16 opacity-50" />
+              <h3 className="mb-2 text-xl font-medium text-slate-900 dark:text-white">
                 Select a document to start chatting
               </h3>
               <p>Choose content from the sidebar to ask questions about it.</p>
@@ -150,22 +141,17 @@ function ChatbotPageContent() {
 
 function ChatbotPageFallback() {
   return (
-    <div className="max-w-6xl mx-auto">
-      <motion.div
-        layout
-        className="flex-shrink-0 w-full flex justify-between gap-10 mb-6"
-      >
-        <HeaderSection
-          inline
-          className="mb-5"
-          title="AI Chatbot"
-          desc="Ask questions about your documents and summaries"
-          icon={<IoMdChatbubbles className="w-10 h-10" />}
-          key="chatbot-header"
-        />
-      </motion.div>
-      <div className="flex justify-center items-center h-[calc(85vh-80px)]">
-        <motion.div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
+    <div className="mx-auto max-w-6xl space-y-6">
+      <HeaderSection
+        inline
+        className="mb-2"
+        title="AI Chatbot"
+        desc="Ask questions about your documents and summaries"
+        icon={<IoMdChatbubbles className="h-7 w-7" />}
+        key="chatbot-header"
+      />
+      <div className="flex h-[calc(85vh-80px)] items-center justify-center rounded-[24px] border border-slate-200/80 bg-white/80 dark:border-slate-800/80 dark:bg-slate-900/80">
+        <motion.div className="h-8 w-8 animate-spin rounded-full border-b-2 border-sky-500" />
       </div>
     </div>
   );

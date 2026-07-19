@@ -501,31 +501,31 @@ export default function TranslatorPage() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className="mx-auto max-w-6xl space-y-6">
       <HeaderSection
         inline
-        className={'mb-5'}
+        className="mb-2"
         title="Translator"
-        desc="Translate your text between different languages."
-        icon={<IoLanguage className="w-10 h-10" />}
-        key={'translator-header'}
+        desc="Translate your text between different languages with polished controls and responsive layouts."
+        icon={<IoLanguage className="h-7 w-7" />}
+        key="translator-header"
       />
 
-      <div className="bg-gray-50 dark:bg-gray-700 rounded-lg shadow p-6">
-        <div className="flex justify-between mb-2">
+      <div className="rounded-[24px] border border-slate-200/80 bg-white/90 p-4 shadow-[0_16px_44px_-28px_rgba(15,23,42,0.45)] dark:border-slate-800/80 dark:bg-slate-900/80 sm:p-6">
+        <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
           {/* Source language selection */}
-          <div className="flex items-center">
-            <div className="flex border-b-2 border-gray-200 dark:border-gray-600">
+          <div className="flex min-w-0 items-center">
+            <div className="flex flex-wrap items-center gap-2 overflow-x-auto border-b-2 border-slate-200 pb-1 dark:border-slate-700">
               {sourceTabLanguages.map((langCode) => {
                 const lang = languages.find((l) => l.value === langCode);
                 if (!lang) return null;
                 return (
                   <button
                     key={`source-tab-${lang.value}`}
-                    className={`px-4 py-2 text-sm font-medium ${
+                    className={`rounded-full px-3 py-2 text-sm font-medium ${
                       sourceLanguage === lang.value
-                        ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 -mb-0.5'
-                        : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                        ? 'bg-sky-50 text-sky-700 dark:bg-sky-500/10 dark:text-sky-300'
+                        : 'text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200'
                     }`}
                     onClick={() => updateSourceLanguage(lang.value, lang.label)}
                   >
@@ -581,7 +581,7 @@ export default function TranslatorPage() {
           {/* Swap button */}
           <button
             onClick={handleSwapLanguages}
-            className="flex items-center justify-center h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-slate-100 text-slate-700 transition hover:border-slate-300 hover:bg-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
             aria-label="Swap languages"
             title="Swap languages"
           >
@@ -589,18 +589,18 @@ export default function TranslatorPage() {
           </button>
 
           {/* Target language selection */}
-          <div className="flex items-center">
-            <div className="flex border-b-2 border-gray-200 dark:border-gray-600">
+          <div className="flex min-w-0 items-center">
+            <div className="flex flex-wrap items-center gap-2 overflow-x-auto border-b-2 border-slate-200 pb-1 dark:border-slate-700">
               {targetTabLanguages.map((langCode) => {
                 const lang = languages.find((l) => l.value === langCode);
                 if (!lang) return null;
                 return (
                   <button
                     key={`target-tab-${lang.value}`}
-                    className={`px-4 py-2 text-sm font-medium ${
+                    className={`rounded-full px-3 py-2 text-sm font-medium ${
                       targetLanguage === lang.value
-                        ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 -mb-0.5'
-                        : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                        ? 'bg-sky-50 text-sky-700 dark:bg-sky-500/10 dark:text-sky-300'
+                        : 'text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200'
                     }`}
                     onClick={() => updateTargetLanguage(lang.value, lang.label)}
                   >
@@ -654,11 +654,11 @@ export default function TranslatorPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <div className="mt-4 grid gap-4 lg:grid-cols-2">
           <div>
             <div className="relative">
               <textarea
-                className="w-full h-84 p-3 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white resize-none thin-scrollbar"
+                className="h-80 w-full resize-none rounded-[20px] border border-slate-200 bg-slate-50 p-4 text-sm leading-6 text-slate-900 shadow-inner focus:outline-none focus:ring-2 focus:ring-sky-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
                 //placeholder="Enter Content to Translate..."
                 value={sourceText}
                 onChange={(e) => setSourceText(e.target.value)}
@@ -687,14 +687,14 @@ export default function TranslatorPage() {
                 </button>
               )}
             </div>
-            <div className="flex justify-end mt-2">
-              <span className="text-xs text-gray-500 dark:text-gray-400">
+            <div className="mt-2 flex justify-end">
+              <span className="text-xs text-slate-500 dark:text-slate-400">
                 {sourceText.length}/5,000
               </span>
             </div>
           </div>
           <div>
-            <div className="relative w-full h-84 p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white resize-none thin-scrollbar overflow-auto">
+            <div className="relative h-80 w-full overflow-auto rounded-[20px] border border-slate-200 bg-slate-50 p-4 text-sm leading-6 text-slate-900 shadow-inner dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100">
               {isTranslating ? (
                 <div className="flex items-center justify-center h-full text-gray-500">
                   <svg
@@ -749,22 +749,22 @@ export default function TranslatorPage() {
                 </>
               )}
             </div>
-            <div className="flex justify-end mt-2">
-              <span className="text-xs text-gray-500 dark:text-gray-400">
+            <div className="mt-2 flex justify-end">
+              <span className="text-xs text-slate-500 dark:text-slate-400">
                 Translation
               </span>
             </div>
           </div>
         </div>
 
-        <div className="mt-4 flex justify-end">
+        <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:justify-end">
           {sourceText.trim() && translatedText && !isTranslating && (
             <>
               <Dropdown className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-white">
                 <DropdownTrigger>
                   <button
                     disabled={isSummarizing}
-                    className={`px-4 py-2 rounded-md text-sm mr-2 ${
+                    className={`min-h-11 rounded-2xl px-4 py-2 text-sm font-medium ${
                       isSummarizing
                         ? 'bg-gray-400 text-white cursor-wait'
                         : 'bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white'
@@ -798,7 +798,7 @@ export default function TranslatorPage() {
               <button
                 onClick={handleSaveToHistory}
                 disabled={savingToHistory}
-                className={`px-4 py-2 rounded-md text-sm ${
+                className={`min-h-11 rounded-2xl px-4 py-2 text-sm font-medium ${
                   saveSuccess
                     ? 'bg-blue-500 dark:bg-blue-400 text-white cursor-default'
                     : savingToHistory
@@ -818,12 +818,12 @@ export default function TranslatorPage() {
 
         {/* Summary Section */}
         {showSummary && (
-          <div className="mt-6 border-t border-gray-200 dark:border-gray-600 pt-4">
+          <div className="mt-6 rounded-[20px] border border-slate-200/80 bg-slate-50/80 p-4 dark:border-slate-800/80 dark:bg-slate-950/40">
             <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
               Summary
             </h3>
 
-            <div className="relative w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white min-h-[100px] mb-3">
+            <div className="relative mb-3 min-h-[120px] w-full rounded-[20px] border border-slate-200 bg-white p-4 text-sm leading-6 text-slate-900 shadow-inner dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
               {isSummarizing ? (
                 <div className="flex items-center justify-center h-full min-h-[100px] text-gray-500">
                   <svg
@@ -853,11 +853,11 @@ export default function TranslatorPage() {
               )}
             </div>
 
-            <div className="flex space-x-2">
+            <div className="flex flex-wrap gap-2">
               <button
                 onClick={copyToClipboard}
                 disabled={!summarizedText || isSummarizing}
-                className={`flex items-center px-3 py-2 rounded-md text-sm ${
+                className={`flex min-h-11 items-center rounded-2xl px-3 py-2 text-sm font-medium ${
                   copySuccess
                     ? 'bg-green-500 text-white'
                     : 'bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-white'
@@ -870,7 +870,7 @@ export default function TranslatorPage() {
               <button
                 onClick={saveSummaryToHistory}
                 disabled={!summarizedText || isSummarizing}
-                className={`flex items-center px-3 py-2 rounded-md text-sm ${
+                className={`flex min-h-11 items-center rounded-2xl px-3 py-2 text-sm font-medium ${
                   saveSummarySuccess
                     ? 'bg-blue-500 text-white'
                     : 'bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-white'
@@ -883,7 +883,7 @@ export default function TranslatorPage() {
               <button
                 onClick={openChatWithSummary}
                 disabled={!summarizedText || isSummarizing}
-                className="flex items-center px-3 py-2 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-white rounded-md text-sm"
+                className="flex min-h-11 items-center rounded-2xl bg-slate-200 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600"
               >
                 <FiMessageCircle className="mr-1" />
                 Chat
@@ -893,7 +893,7 @@ export default function TranslatorPage() {
         )}
 
         {error && (
-          <div className="mt-2 p-2 bg-red-100 border border-red-300 text-red-800 rounded">
+          <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300">
             <p className="font-medium">Error:</p>
             <p>{error}</p>
           </div>

@@ -1,7 +1,5 @@
 import React from 'react';
 
-type Props = {};
-
 const HeaderSection = (props: {
   title: string;
   desc?: string;
@@ -10,26 +8,26 @@ const HeaderSection = (props: {
   inline?: boolean;
 }) => {
   return (
-    <div className={`w-full ${props.className} max-w-[650px]`}>
-      <div className="flex items-center gap-2 mb-0">
-        <div className="w-auto h-auto text-blue-600 dark:text-blue-400">{props.icon}</div>
+    <div className={`w-full ${props.className ?? ''} max-w-3xl`}>
+      <div className="flex items-start gap-3">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-500 via-blue-600 to-indigo-600 text-white shadow-lg shadow-sky-500/20">
+          {props.icon}
+        </div>
 
-        <div className="flex flex-col">
-          <p className="font-bold text-large leading-5 line-clamp-1 text-gray-800 dark:text-white">
+        <div className="min-w-0 flex-1">
+          <p className="text-lg font-semibold leading-6 text-slate-900 dark:text-white">
             {String(props.title)}
           </p>
           {props.inline ? (
-            <p className="text-small text-gray-600 dark:text-gray-300 leading-5 line-clamp-1">
+            <p className="mt-1 text-sm leading-6 text-slate-600 dark:text-slate-300">
               {String(props.desc)}
             </p>
-          ) : (
-            ''
-          )}
+          ) : null}
         </div>
       </div>
       {!props.inline ? (
-        <div>
-          <p className="text-small text-gray-600 dark:text-gray-300">
+        <div className="mt-3">
+          <p className="text-sm leading-6 text-slate-600 dark:text-slate-300">
             {String(props.desc)}
           </p>
         </div>

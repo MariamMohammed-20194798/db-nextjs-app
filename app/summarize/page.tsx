@@ -14,100 +14,93 @@ export default function Home() {
   const sources = [
     {
       label: 'Text',
-      icon: <BsFileEarmarkText className="w-4 h-4" />,
-      description:
-        "Our systems will scrape the URLs you provide and automatically add them to the agent's knowledge base.",
+      icon: <BsFileEarmarkText className="h-4 w-4" />,
+      description: 'Drop in a paragraph or article to create a focused summary.',
     },
     {
       label: 'File',
-      icon: <FaFilePdf className="w-4 h-4" />,
-      description:
-        "Our systems will scrape the URLs you provide and automatically add them to the agent's knowledge base.",
+      icon: <FaFilePdf className="h-4 w-4" />,
+      description: 'Upload a text file and generate a concise summary instantly.',
     },
     {
       label: 'URL',
-      icon: <CgWebsite className="w-4 h-4" />,
-      description:
-        "Our systems will scrape the URLs you provide and automatically add them to the agent's knowledge base.",
+      icon: <CgWebsite className="h-4 w-4" />,
+      description: 'Share a URL and turn it into a readable summary for quick review.',
     },
   ];
 
   const [selectedSourceIndex, setSourceIndex] = React.useState(0);
+
   return (
-    <div className="max-w-5xl mx-auto">
-      <motion.div
-        key="header-upload-vf-doc"
-        layout
-        className="flex-shrink-0 w-full flex justify-between gap-10 "
-      >
-        <HeaderSection
-          inline
-          className={'mb-5'}
-          title="Summarize"
-          desc={`Generate concise summaries of your text.`}
-          icon={<IoDocumentText className="w-10 h-10" />}
-          key={'summarize-header'}
-        />
-      </motion.div>
-      <motion.div
-        layout
-        key={`add-vf-doc-controls`}
-        className="flex-shrink-0 flex gap-6 mb-4"
-      >
-        {sources.map((source, index) => (
-          <button
-            className={`flex gap-2 justify-center items-center px-2 py-1 rounded-md dark:bg-transparent transition-colors border ${
-              selectedSourceIndex === index
-                ? 'text-blue-500 border-blue-500'
-                : 'dark:bg-gray-700 border-gray-600 hover:text-gray-400'
-            }`}
-            key={`kb_add_source_index_${index}`}
-            onClick={() => setSourceIndex(index)}
-          >
-            {source.icon}
-            {source.label}
-          </button>
-        ))}
-      </motion.div>
+    <div className="mx-auto max-w-6xl space-y-6">
+      <HeaderSection
+        inline
+        className="mb-2"
+        title="Summarize"
+        desc="Turn raw content into concise summaries from text, files, or URLs."
+        icon={<IoDocumentText className="h-7 w-7" />}
+        key="summarize-header"
+      />
 
-      <motion.div key={'thing-vf-body-upload'} className="relative w-full h-full">
-        <AnimatePresence>
-          {selectedSourceIndex === 0 && (
-            <motion.div
-              className="absolute left-0 top-0 w-full h-full bg-blue-500"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              key={`vf-add-doc-tags-${selectedSourceIndex}`}
+      <div className="rounded-[24px] border border-slate-200/80 bg-white/90 p-4 shadow-[0_16px_44px_-28px_rgba(15,23,42,0.45)] dark:border-slate-800/80 dark:bg-slate-900/80 sm:p-6">
+        <div className="flex flex-wrap gap-2">
+          {sources.map((source, index) => (
+            <button
+              className={`flex items-center gap-2 rounded-2xl border px-3 py-2 text-sm font-medium transition-all ${
+                selectedSourceIndex === index
+                  ? 'border-sky-500 bg-sky-50 text-sky-700 dark:border-sky-400 dark:bg-sky-500/10 dark:text-sky-300'
+                  : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:text-white'
+              }`}
+              key={`kb_add_source_index_${index}`}
+              onClick={() => setSourceIndex(index)}
             >
-              <AddSourceTextDoc />
-            </motion.div>
-          )}
+              {source.icon}
+              {source.label}
+            </button>
+          ))}
+        </div>
 
-          {selectedSourceIndex === 1 && (
-            <motion.div
-              className="absolute left-0 top-0 w-full h-full"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              key={`vf-add-doc-body-${selectedSourceIndex}`}
-            >
-              <AddSourceFile onFilesAdded={() => {}} />
-            </motion.div>
-          )}
-          {selectedSourceIndex === 2 && (
-            <motion.div
-              className="absolute left-0 top-0 w-full h-full"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              key={`vf-add-doc-body-${selectedSourceIndex}`}
-            >
-              <AddSourceUrl />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
+        <div className="mt-4 rounded-[20px] border border-slate-200/80 bg-slate-50/70 p-3 dark:border-slate-800/80 dark:bg-slate-950/40 sm:p-4">
+          <p className="text-sm leading-6 text-slate-600 dark:text-slate-300">{sources[selectedSourceIndex].description}</p>
+        </div>
+
+        <div className="mt-6">
+          <AnimatePresence mode="wait">
+            {selectedSourceIndex === 0 && (
+              <motion.div
+                key="text-source"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+              >
+                <AddSourceTextDoc />
+              </motion.div>
+            )}
+
+            {selectedSourceIndex === 1 && (
+              <motion.div
+                key="file-source"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+              >
+                <AddSourceFile onFilesAdded={() => {}} />
+              </motion.div>
+            )}
+
+            {selectedSourceIndex === 2 && (
+              <motion.div
+                key="url-source"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+              >
+                <AddSourceUrl />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
     </div>
   );
 }

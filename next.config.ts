@@ -1,10 +1,7 @@
-// next.config.js
-const { nextui } = require('@nextui-org/react');
+import type { NextConfig } from 'next';
 
-/** @type {import('next').NextConfig} */
-const nextConfig = nextui({
+const nextConfig: NextConfig = {
   reactStrictMode: true,
-  // …any other next.js settings
-});
+};
 
-module.exports = nextConfig;
+export default nextConfig;
