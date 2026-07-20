@@ -53,10 +53,6 @@ export default function Home() {
       <section className="rounded-[28px] border border-slate-200/80 bg-gradient-to-br from-sky-500/10 via-white/80 to-indigo-500/10 p-6 shadow-[0_25px_70px_-28px_rgba(15,23,42,0.45)] dark:border-slate-800/80 dark:from-sky-500/15 dark:via-slate-900/80 dark:to-indigo-500/10 sm:p-8">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-sky-200 bg-white/80 px-3 py-1 text-sm font-medium text-sky-700 dark:border-sky-500/30 dark:bg-slate-800/80 dark:text-sky-300">
-              <IoSparkles className="h-4 w-4" />
-              Refined for every screen size
-            </div>
             <div className="flex items-center gap-3">
               <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-500 via-blue-600 to-indigo-600 text-white shadow-lg shadow-sky-500/20">
                 <IoBulb className="h-7 w-7" />
@@ -70,23 +66,6 @@ export default function Home() {
                   experiences from a single polished dashboard.
                 </p>
               </div>
-            </div>
-          </div>
-
-          <div className="grid gap-3 sm:grid-cols-2 lg:min-w-[280px]">
-            <div className="rounded-2xl border border-slate-200/80 bg-white/80 p-4 shadow-sm dark:border-slate-800/80 dark:bg-slate-900/80">
-              <p className="text-2xl font-semibold text-slate-900 dark:text-white">5</p>
-              <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-                AI-powered tools
-              </p>
-            </div>
-            <div className="rounded-2xl border border-slate-200/80 bg-white/80 p-4 shadow-sm dark:border-slate-800/80 dark:bg-slate-900/80">
-              <p className="text-2xl font-semibold text-slate-900 dark:text-white">
-                100%
-              </p>
-              <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-                Responsive layout
-              </p>
             </div>
           </div>
         </div>

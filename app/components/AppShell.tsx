@@ -38,44 +38,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         ) : null}
 
         <div className="min-w-0 flex-1">
-          <header className="mb-4 flex items-center justify-between rounded-[24px] border border-slate-200/80 bg-white/80 px-3 py-3 shadow-[0_20px_45px_-24px_rgba(15,23,42,0.4)] backdrop-blur-xl dark:border-slate-800/80 dark:bg-slate-900/70 sm:px-4 lg:px-5">
-            <div className="flex min-w-0 items-center gap-3">
-              {showSidebar ? (
-                <button
-                  type="button"
-                  onClick={() => setMobileMenuOpen(true)}
-                  className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 text-slate-700 transition hover:border-slate-300 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-500 lg:hidden dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
-                  aria-label="Open navigation menu"
-                >
-                  <FiMenu className="h-5 w-5" />
-                </button>
-              ) : null}
-
-              <Link
-                href="/"
-                className="flex min-w-0 items-center gap-3 rounded-2xl px-1 py-1 transition hover:bg-slate-100/70 dark:hover:bg-slate-800/70"
-              >
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-500 via-blue-600 to-indigo-600 text-white shadow-lg shadow-sky-500/20">
-                  <IoSparkles className="h-5 w-5" />
-                </div>
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-slate-900 dark:text-white">
-                    DocuBrain
-                  </p>
-                  <p className="truncate text-xs text-slate-500 dark:text-slate-400">
-                    {pageTitle}
-                  </p>
-                </div>
-              </Link>
-            </div>
-
-            <div className="hidden items-center gap-2 rounded-full border border-slate-200/80 bg-slate-50/90 px-3 py-2 text-xs font-medium text-slate-600 sm:flex dark:border-slate-700/80 dark:bg-slate-800/80 dark:text-slate-300">
-              <span className="rounded-full bg-emerald-500/15 px-2 py-1 text-emerald-600 dark:text-emerald-400">
-                Mobile ready
-              </span>
-              <span className="hidden md:inline">Accessible • polished • responsive</span>
-            </div>
-          </header>
 
           {showSidebar ? (
             <>
